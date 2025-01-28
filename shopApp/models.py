@@ -15,6 +15,9 @@ class ShopDetailsModel(models.Model):
     address = models.CharField(max_length=300, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
+    cover_image = models.ImageField(upload_to='images/shop/cover', null=True)
+    avatar_image = models.ImageField(upload_to='images/shopgallery/')
+
 
 # class ShopEmployeeDetailsModel(models.Model):
 #     shop = models.ForeignKey(ShopDetailsModel, on_delete=models.CASCADE)

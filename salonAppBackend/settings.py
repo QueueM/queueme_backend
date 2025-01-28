@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
 # import logging
 
 # logging.basicConfig(level=logging.DEBUG)
@@ -184,15 +188,17 @@ AWS_STORAGE_BUCKET_NAME = 'queme'
 AWS_S3_REGION_NAME = 'me-south-1'  # e.g., 'us-west-1'
 # AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.me-south-1.amazonaws.com'
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com'
-
+AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_AUTH = False
 
 # Media Settings
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
-DEFAULT_FILE_STORAGE = 'salonAppBackend.storages.MediaStorage'
+
+# DEFAULT_FILE_STORAGE = 'salonAppBackend.storages.MediaStorage'
 
 CSRF_TRUSTED_ORIGINS = [
     "https://shop.queueme.net",
