@@ -25,6 +25,7 @@ class ShopPermissionsViewSet(viewsets.ModelViewSet):
 class ShopGalleryImagesModelViewSet(viewsets.ModelViewSet):
     queryset = ShopGalleryImagesModel.objects.all()
     serializer_class = ShopGalleryImagesModelSerializer
+    filterset_fields = ['shop']
 
 class ShopSpecialistDetailsModelViewSet(CustomBaseModelViewSet):
     queryset = ShopSpecialistDetailsModel.objects.all()
