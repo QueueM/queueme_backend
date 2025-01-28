@@ -11,6 +11,11 @@ from customClasses.CustomBaseModelViewSet import CustomBaseModelViewSet
 class ShopDetailsViewSet(viewsets.ModelViewSet):
     queryset = ShopDetailsModel.objects.all()
     serializer_class = ShopDetailsModelSerializer
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['user'] = self.request.user  # Pass the user into the context
+        return context
 
 
 class ShopPermissionsViewSet(viewsets.ModelViewSet):

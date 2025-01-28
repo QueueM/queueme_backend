@@ -2,7 +2,7 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
+from helpers.PaginationClass import CustomPageNumberPagination
 class CustomBaseModelViewSet_ChoicesMixin:
     @action(detail=False, methods=['get'], url_path='choices', url_name='choices')
     def choices(self, request, *args, **kwargs):
@@ -44,7 +44,7 @@ class CustomBaseModelViewSet_ChoicesMixin:
 
 
 class CustomBaseModelViewSet(CustomBaseModelViewSet_ChoicesMixin, ModelViewSet):
-    pass
+    pagination_class = CustomPageNumberPagination
 
 
 # class ChoicesMixin:

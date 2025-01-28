@@ -14,7 +14,7 @@ from authapp.models import SendOTPModel
 
 from .serializers import CompanyDetailsModelSerializer, CompanyEmployeeRoleManagementModelSerializer, CompanyEmployeeDetailsModelSerializer
 from .models import CompanyDetailsModel, CompanyEmployeeRoleManagementModel, CompanyEmployeeDetailsModel
-
+from customClasses.CustomBaseModelViewSet import CustomBaseModelViewSet
 class RegisterAsCompanyAPIView(APIView):
     permission_classes = []
     def post(self, request):
@@ -71,7 +71,7 @@ class CompanyDetailsViewSet(viewsets.ModelViewSet):
     queryset = CompanyDetailsModel.objects.all()
     serializer_class = CompanyDetailsModelSerializer
 
-class CompanyEmployeeDetailsModelViewSet(viewsets.ModelViewSet):
+class CompanyEmployeeDetailsModelViewSet(CustomBaseModelViewSet):
     queryset = CompanyEmployeeDetailsModel.objects.all()
     serializer_class = CompanyEmployeeDetailsModelSerializer
 
