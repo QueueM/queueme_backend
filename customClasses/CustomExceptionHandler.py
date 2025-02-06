@@ -1,11 +1,18 @@
 
 
 from rest_framework.views import exception_handler
-
+from rest_framework.response import Response
 def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
 
     # if response data is dict
+    if response is None:
+        # If response is None, return a generic error response
+        return Response(
+            {"message": str(exc)},
+            status=500
+        )
+
     if response is not None and isinstance(response.data, dict):
         # Ensure the message key is a string, not a list
         if 'message' not in response.data:
@@ -26,5 +33,5 @@ def custom_exception_handler(exc, context):
     elif isinstance(response.data, list):
         obj={"message":', '.join(response.data)}
         response.data = obj 
-
+    print(type(response.data))
     return response

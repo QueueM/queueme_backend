@@ -70,6 +70,11 @@ class RegisterAsCompanyAPIView(APIView):
 class CompanyDetailsViewSet(viewsets.ModelViewSet):
     queryset = CompanyDetailsModel.objects.all()
     serializer_class = CompanyDetailsModelSerializer
+    def get_queryset(self):
+        """
+        This view should return the company details associated with the current user.
+        """
+        return CompanyDetailsModel.objects.filter(user=self.request.user)
 
 class CompanyEmployeeDetailsModelViewSet(CustomBaseModelViewSet):
     queryset = CompanyEmployeeDetailsModel.objects.all()
