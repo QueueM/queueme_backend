@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 
-from shopApp.models import ShopSpecialistDetailsModel
+# from shopApp.models import ShopSpecialistDetailsModel
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 # from django.core.exceptions import ValidationError
@@ -29,7 +29,7 @@ class ServiceBookingDetailsModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bokkings")
     service = models.ForeignKey(ShopServiceDetailsModel, on_delete=models.CASCADE, related_name="bokkings")
     price = models.FloatField(blank=True)
-    specialist = models.ForeignKey(ShopSpecialistDetailsModel, on_delete=models.CASCADE, related_name="bokkings", null=True)
+    specialist = models.ForeignKey("shopApp.ShopSpecialistDetailsModel", on_delete=models.CASCADE, related_name="bokkings", null=True)
     booking_date = models.DateField()
     booking_time = models.TimeField()
     created_at = models.DateTimeField(auto_now_add=True)

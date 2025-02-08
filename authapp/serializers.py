@@ -18,7 +18,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ['password', 'phone_no']
 
     def validate(self, data):
-        data['username'] = 'phone_no'
+        data['username'] = data['phone_no']
         return data
 
     def create(self, validated_data):

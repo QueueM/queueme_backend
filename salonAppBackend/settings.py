@@ -60,7 +60,8 @@ INSTALLED_APPS = [
     'shopApp',
     'customersApp',
     'shopServiceApp',
-    'subscriptionApp'
+    'subscriptionApp',
+    'reelsApp',
 ]
 
 MIDDLEWARE = [
