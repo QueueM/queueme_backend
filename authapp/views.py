@@ -26,7 +26,7 @@ class RegistrationOTPAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         # otp = random.randint(100000, 999999)
-        otp = 1
+        otp = 2222
         phone_number = request.GET["phone_number"]
         type = request.GET['otp_type']
         otpRecord = SendOTPModel(phone_number=phone_number, otp=otp, otp_type=type, otp_mode='phone')
