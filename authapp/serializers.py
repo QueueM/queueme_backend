@@ -32,5 +32,6 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('phone_no')  # Remove confirm_password
+        validated_data.pop('otp')  # Remove confirm_password
         user = User.objects.create_user(**validated_data)
         return user
