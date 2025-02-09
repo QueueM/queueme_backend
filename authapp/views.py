@@ -94,6 +94,9 @@ class RegisterAPIView(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
+            prevuser = User.objects.filter(username=serializer.data['username'])
+            if prevuser.exists():
+                return ValidationError("User with same phone number already exis !!")
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
             access_token = refresh.access_token
