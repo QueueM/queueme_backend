@@ -133,7 +133,7 @@ class LoginWithOTPAPIView(APIView):
         user = User.objects.filter(username=phone_number)
         if not user.exists():
             return Response({"message" : "Invalid credentials !!"}, status=status.HTTP_400_BAD_REQUEST)
-        
+        user = User.objects.get(username=phone_number)
 
         
         # Check otp validation
@@ -143,7 +143,7 @@ class LoginWithOTPAPIView(APIView):
         
         refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token
-        Response(
+        return Response(
                 {
                     "access": str(access_token),
                     "refresh": str(refresh)
