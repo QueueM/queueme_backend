@@ -75,6 +75,11 @@ class CompanyDetailsViewSet(viewsets.ModelViewSet):
         This view should return the company details associated with the current user.
         """
         return CompanyDetailsModel.objects.filter(user=self.request.user)
+    
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['user'] = self.request.user  # Pass the user into the context
+        return context
 
 class CompanyEmployeeDetailsModelViewSet(CustomBaseModelViewSet):
     queryset = CompanyEmployeeDetailsModel.objects.all()

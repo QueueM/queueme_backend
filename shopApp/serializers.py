@@ -12,7 +12,8 @@ from shopServiceApp.models import ShopServiceCategoryModel
 class ShopOpeningHoursModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShopOpeningHoursModel
-        fields = "__all__"
+        # fields = "__all__"
+        exclude = ["shop"]
 class ShopDetailsModelSerializer(serializers.ModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(
         queryset=ShopServiceCategoryModel.objects.all(),many=True

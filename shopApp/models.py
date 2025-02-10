@@ -49,7 +49,7 @@ class ShopDetailsModel(models.Model):
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     cover_image = models.ImageField(upload_to='images/shop/cover', null=True)
-    avatar_image = models.ImageField(upload_to='images/shopgallery/')
+    avatar_image = models.ImageField(upload_to='images/shopgallery/', null=True, blank=True)
 
     #
     username = models.CharField(max_length=20, default="", blank=True)
