@@ -12,6 +12,10 @@ class CompanyDetailsModel(models.Model):
         ("Rejected",  "Rejected"),
         ("created",  "created")
     ]
+    class DAYS_MERCHANT_TYPE(models.TextChoices):
+        FREELANCE = 'freelance', 'Freelance'
+        SHOP = 'shop', 'Shop'
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='company')
     name = models.CharField(max_length=300)
     company_image = models.ImageField(upload_to='images/companylogo', null=True, blank=True)
@@ -20,6 +24,11 @@ class CompanyDetailsModel(models.Model):
     is_verified = models.BooleanField(default=False)
     status = models.CharField(max_length=30,choices=STATUS_CHOICES, default="created")
     shops_limit = models.IntegerField(default=1)
+    merchant_type = models.CharField(max_length=20, choices=DAYS_MERCHANT_TYPE.choices, default=DAYS_MERCHANT_TYPE.FREELANCE)
+    name_arabic = models.CharField(max_length=300, default="")
+    company_registration_document = models.FileField(upload_to='company_registration_doc/', null=True, blank=True)
+    tax_registration_number = models.CharField(max_length=30, default="")
+    
 
 
 class CompanyEmployeeDetailsModel(models.Model):
