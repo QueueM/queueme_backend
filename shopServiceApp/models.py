@@ -7,18 +7,46 @@ from django.contrib.auth.models import User
 from django.utils.timezone import now
 # from django.core.exceptions import ValidationError
 from rest_framework.exceptions import ValidationError
-
 class ShopServiceCategoryModel(models.Model):
     name = models.CharField(max_length=200)
 
+class ShopServiceTimeSlotModel(models.Model):
+    class DAY_CHOICES(models.TextChoices):
+        MONDAY = 'monday', 'Monday'
+        TUESDAY = 'tuesday', 'Tuesday'
+        WEDNESDAY = 'wednesday', 'Wednesday'
+        THURSDAY = 'thursday', 'Thursday'
+        FRIDAY = 'friday', 'Friday'
+        SATURDAY = 'saturday', 'Saturday'
+        SUNDAY = 'sunday', 'Sunday'
+
+    service = models.ForeignKey("shopServiceApp.ShopServiceDetailsModel", on_delete=models.CASCADE, related_name='available_time_slots')
+    day = models.CharField(max_length=20, choices=DAY_CHOICES.choices)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def __str__(self):
+        return f"{self.service.name} - {self.get_day_display()} ({self.start_time}"
+
 class ShopServiceDetailsModel(models.Model):
+    class SERVICES_TYPES_CHOICES(models.TextChoices):
+        IN_SHOP = 'in_shop', 'In Shop'
+        AT_HOME = 'at_home', 'At Home'
+        BOTH = 'both', "Both"
+
+    service_type = models.CharField(max_length=20, choices=SERVICES_TYPES_CHOICES.choices, default=SERVICES_TYPES_CHOICES.IN_SHOP)
     name = models.CharField(max_length=300)
+    name_arabic = models.CharField(max_length=300, default="")
     description = models.TextField()
     category = models.ForeignKey(ShopServiceCategoryModel, on_delete=models.CASCADE)
-    price = models.FloatField()
-    duration = models.FloatField()
+    price = models.DecimalField(max_digits=10,decimal_places=2)
+    min_price = models.DecimalField(max_digits=10,decimal_places=2,null=True, blank=True)
+    max_price = models.DecimalField(max_digits=10,decimal_places=2,null=True, blank=True)
+    duration = models.DecimalField(max_digits=10,decimal_places=2,null=True, blank=True) #in minutes
     unit = models.CharField(max_length=200)
     number_of_bookings = models.IntegerField()
+    is_availabe = models.BooleanField(default=False)
+    specialists = models.ManyToManyField("shopApp.ShopSpecialistDetailsModel", related_name="services_assigned", null=True, blank=True)
 
 class ServiceBookingDetailsModel(models.Model):
     class STATUS_CHOICES(models.TextChoices):
@@ -26,7 +54,8 @@ class ServiceBookingDetailsModel(models.Model):
         BOOKED = 'booked', 'Booked'
         COMPLETED = 'completed', "Completed"
         CANCELLED = 'cancelled', 'Cancelled'
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bokkings")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bokkings", null=True, blank=True)
+    customer = models.ForeignKey("customersApp.CustomersDetailsModel", on_delete=models.CASCADE, null=True, blank=True)
     service = models.ForeignKey(ShopServiceDetailsModel, on_delete=models.CASCADE, related_name="bokkings")
     price = models.FloatField(blank=True)
     specialist = models.ForeignKey("shopApp.ShopSpecialistDetailsModel", on_delete=models.CASCADE, related_name="bokkings", null=True)

@@ -1,13 +1,45 @@
 
 
 from rest_framework import serializers
-from .models import ShopServiceDetailsModel, ShopServiceCategoryModel, ServiceBookingDetailsModel, ServiceBookingDiscountCouponsModel
+from .models import ShopServiceDetailsModel, ShopServiceCategoryModel, ServiceBookingDetailsModel, ServiceBookingDiscountCouponsModel, ShopServiceTimeSlotModel
 
+
+class ShopServiceTimeSlotSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShopServiceTimeSlotModel
+        # fields = '__all__'
+        exclude = ["service"]
 
 class ShopServiceDetailsModelSerializer(serializers.ModelSerializer):
+    time_slots = ShopServiceTimeSlotSerializer(source='available_time_slots', many=True, read_only=True)
+
     class Meta:
         model = ShopServiceDetailsModel
-        fields = "__all__"
+        fields = '__all__'
+
+    def create(self, validated_data):
+        time_slots_data = self.context['request'].data.get('time_slots', [])
+        service = ShopServiceDetailsModel.objects.create(**validated_data)
+        
+        for slot_data in time_slots_data:
+            ShopServiceTimeSlotModel.objects.create(service=service, **slot_data)
+        
+        return service
+
+    def update(self, instance, validated_data):
+        time_slots_data = self.context['request'].data.get('time_slots', [])
+        
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # Clear existing time slots and add new ones
+        if time_slots_data:
+            instance.available_time_slots.all().delete()
+            for slot_data in time_slots_data:
+                ShopServiceTimeSlotModel.objects.create(service=instance, **slot_data)
+        
+        return instance
 
 class ShopServiceCategoryModelSerializer(serializers.ModelSerializer):
     class Meta:
