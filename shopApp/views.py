@@ -9,7 +9,7 @@ from .models import ShopDetailsModel, ShopPermissionsModel, ShopGalleryImagesMod
 from .serializers import ShopDetailsModelSerializer, ShopPermissionsModelSerializer, ShopGalleryImagesModelSerializer, ShopSpecialistDetailsModelSerializer
 from customClasses.CustomBaseModelViewSet import CustomBaseModelViewSet
 from .filters import ShopGalleryImagesFilter, ShopDetailsViewsetFilter
-class ShopDetailsViewSet(viewsets.ModelViewSet):
+class ShopDetailsViewSet(CustomBaseModelViewSet):
     queryset = ShopDetailsModel.objects.all()
     serializer_class = ShopDetailsModelSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
