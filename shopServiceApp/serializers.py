@@ -28,9 +28,10 @@ class ShopServiceDetailsModelSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         time_slots_data = self.context['request'].data.get('time_slots', [])
-        
+        request_data = self.context['request'].data
         for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+            if attr != 'specialists':
+                setattr(instance, attr, value)
         instance.save()
 
         # Clear existing time slots and add new ones
@@ -38,6 +39,10 @@ class ShopServiceDetailsModelSerializer(serializers.ModelSerializer):
             instance.available_time_slots.all().delete()
             for slot_data in time_slots_data:
                 ShopServiceTimeSlotModel.objects.create(service=instance, **slot_data)
+        
+        if 'specialists' in request_data:
+            specialists_data = self.context['request'].data.get('specialists', [])
+            instance.specialists.set(specialists_data)  # Use .set() for ManyToMany fields
         
         return instance
 
