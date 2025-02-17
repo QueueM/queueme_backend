@@ -54,6 +54,12 @@ class ServiceBookingDetailsModel(models.Model):
         BOOKED = 'booked', 'Booked'
         COMPLETED = 'completed', "Completed"
         CANCELLED = 'cancelled', 'Cancelled'
+    
+    class PAYMENT_STATUS_CHOICES(models.TextChoices):
+        UNPAID = 'unpaid', 'Unpaid'
+        PENDING = 'pending', 'Pending'
+        PAID = 'paid', 'Paid'
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bokkings", null=True, blank=True)
     customer = models.ForeignKey("customersApp.CustomersDetailsModel", on_delete=models.CASCADE, null=True, blank=True)
     service = models.ForeignKey(ShopServiceDetailsModel, on_delete=models.CASCADE, related_name="bokkings")
@@ -69,8 +75,13 @@ class ServiceBookingDetailsModel(models.Model):
         max_digits=100, decimal_places=2, help_text="Final Amount", default=0.0
     )
     notes = models.TextField()
-
+    booking_place = models.CharField(max_length=20, choices=ShopServiceDetailsModel.SERVICES_TYPES_CHOICES.choices, default=ShopServiceDetailsModel.SERVICES_TYPES_CHOICES.IN_SHOP)
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES.choices, default=PAYMENT_STATUS_CHOICES.UNPAID)
     def save(self, *args, **kwargs):
+        if self.user.customer :
+            self.customer = self.user.customer
+        else :
+            raise ValidationError(f"User is not a Customer")
         if not self.price:
             self.price = self.service.price
         if self.discount_coupon != "":

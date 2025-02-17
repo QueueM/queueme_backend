@@ -11,7 +11,7 @@ from rest_framework import filters
 
 from .models import ShopServiceGalleryModel
 from .serializers import ShopServiceGalleryModelSerializer
-from .filters import ShopServiceGalleryFilter
+from .filters import ShopServiceGalleryFilter, ServiceBookingDetailsFilter
 
 class ShopServiceDetailsViewSet(CustomBaseModelViewSet):
     queryset = ShopServiceDetailsModel.objects.all()
@@ -24,6 +24,8 @@ class ShopServiceCategoryViewSet(CustomBaseModelViewSet):
 class ServiceBookingDetailsViewSet(CustomBaseModelViewSet):
     queryset = ServiceBookingDetailsModel.objects.all()
     serializer_class = ServiceBookingDetailsModelSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = ServiceBookingDetailsFilter
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
