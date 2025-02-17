@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'shopServiceApp',
     'subscriptionApp',
     'reelsApp',
+    'employeeApp',
 ]
 
 MIDDLEWARE = [

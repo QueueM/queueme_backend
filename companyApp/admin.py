@@ -1,9 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import CompanyDetailsModel, CompanyEmployeeDetailsModel, CompanyEmployeeRoleManagementModel
+from .models import CompanyDetailsModel
 
 
 admin.site.register(CompanyDetailsModel)
-admin.site.register(CompanyEmployeeDetailsModel)
-admin.site.register(CompanyEmployeeRoleManagementModel)

@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 from .models import ShopServiceDetailsModel, ShopServiceCategoryModel, ServiceBookingDetailsModel, ServiceBookingDiscountCouponsModel, ShopServiceTimeSlotModel
-
+from .models import ShopServiceGalleryModel
 
 class ShopServiceTimeSlotSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,4 +64,9 @@ class ServiceBookingDetailsModelSerializer(serializers.ModelSerializer):
 class ServiceBookingDiscountCouponsModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = ServiceBookingDiscountCouponsModel
+        fields = "__all__"
+
+class ShopServiceGalleryModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShopServiceGalleryModel
         fields = "__all__"

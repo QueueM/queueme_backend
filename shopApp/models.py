@@ -4,7 +4,6 @@ from django.db import models
 
 from companyApp.models import CompanyDetailsModel
 from django.contrib.auth.models import User
-from companyApp.models import CompanyEmployeeDetailsModel 
 from shopServiceApp.models import ShopServiceCategoryModel
 
 class ShopOpeningHoursModel(models.Model):
@@ -18,7 +17,7 @@ class ShopOpeningHoursModel(models.Model):
         SUNDAY = 'sunday', 'Sunday'
 
     shop = models.ForeignKey('ShopDetailsModel', related_name="opening_hours", on_delete=models.CASCADE)
-    day = models.CharField(max_length=10, choices=DAYS_OF_WEEK)
+    day = models.CharField(max_length=10, choices=DAYS_OF_WEEK.choices)
     open_time = models.TimeField()
     close_time = models.TimeField()
     is_closed = models.BooleanField(default=False)
@@ -41,7 +40,7 @@ class ShopDetailsModel(models.Model):
         
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     company = models.ForeignKey(CompanyDetailsModel, on_delete=models.CASCADE)
-    name = models.CharField(max_length=300)
+    name = models.CharField(max_length=300, unique=True)
     description = models.TextField(null=True, blank=True)
     note = models.CharField(max_length=300, null=True, blank=True)
     contact_number = models.CharField(max_length=30, null=True, blank=True)
@@ -52,7 +51,7 @@ class ShopDetailsModel(models.Model):
     avatar_image = models.ImageField(upload_to='images/shopgallery/', null=True, blank=True)
 
     #
-    username = models.CharField(max_length=20, default="", blank=True)
+    username = models.CharField(max_length=20, default="", blank=True, unique=True)
     shop_name = models.CharField(max_length=300, default="")
     country = models.CharField(max_length=80, default="", blank=True)
     city = models.CharField(max_length=300, default="", blank=True)
@@ -88,7 +87,7 @@ class ShopSpecialistDetailsModel(models.Model):
         ('male', 'Male'),
         ('female', 'Female'),
     ]
-    employee = models.OneToOneField(CompanyEmployeeDetailsModel, on_delete=models.CASCADE, related_name="specialist")
+    employee = models.OneToOneField("employeeApp.EmployeeDetailsModel", on_delete=models.CASCADE, related_name="specialist")
     name = models.CharField(max_length=300)
     speciality = models.CharField(max_length=300)
     shop = models.ForeignKey(ShopDetailsModel, on_delete=models.CASCADE)

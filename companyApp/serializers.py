@@ -2,9 +2,8 @@
 
 from rest_framework import serializers
 
-from .models import CompanyDetailsModel, CompanyEmployeeDetailsModel, CompanyEmployeeRoleManagementModel
 from rest_framework.exceptions import ValidationError
-
+from .models import CompanyDetailsModel
 
 class CompanyDetailsModelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,13 +16,3 @@ class CompanyDetailsModelSerializer(serializers.ModelSerializer):
         if CompanyDetailsModel.objects.filter(user=self.context['user']):
             raise ValidationError("User already have a company registered")
         return data
-
-class CompanyEmployeeDetailsModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CompanyEmployeeDetailsModel
-        fields = "__all__"
-
-class CompanyEmployeeRoleManagementModelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CompanyEmployeeRoleManagementModel
-        fields = "__all__"

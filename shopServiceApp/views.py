@@ -3,11 +3,15 @@ from django.shortcuts import render
 # Create your views here.
 from .models import ShopServiceDetailsModel, ShopServiceCategoryModel, ServiceBookingDiscountCouponsModel, ServiceBookingDetailsModel
 from .serializers import ShopServiceCategoryModelSerializer, ShopServiceDetailsModelSerializer, ServiceBookingDetailsModelSerializer, ServiceBookingDiscountCouponsModelSerializer
-from customClasses.CustomBaseModelViewSet import CustomBaseModelViewSet, ModelViewSet
-from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
-from rest_framework import status
+from customClasses.CustomBaseModelViewSet import CustomBaseModelViewSet
 
+
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+
+from .models import ShopServiceGalleryModel
+from .serializers import ShopServiceGalleryModelSerializer
+from .filters import ShopServiceGalleryFilter
 
 class ShopServiceDetailsViewSet(CustomBaseModelViewSet):
     queryset = ShopServiceDetailsModel.objects.all()
@@ -56,3 +60,10 @@ class ServiceBookingDetailsViewSet(CustomBaseModelViewSet):
 class ServiceBookingDiscountCouponsViewSet(CustomBaseModelViewSet):
     queryset = ServiceBookingDiscountCouponsModel.objects.all()
     serializer_class = ServiceBookingDiscountCouponsModelSerializer
+    
+
+class ShopGalleryImagesModelViewSet(CustomBaseModelViewSet):
+    queryset = ShopServiceGalleryModel.objects.all()
+    serializer_class = ShopServiceGalleryModelSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = ShopServiceGalleryFilter

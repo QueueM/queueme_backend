@@ -118,3 +118,7 @@ class ServiceBookingDiscountCouponsModel(models.Model):
     def usage_count(self):
         """Count how many times the coupon has been used."""
         return self.bokkings.filter(coupon=self).count()
+
+class ShopServiceGalleryModel(models.Model):
+    service = models.ForeignKey("shopServiceApp.ShopServiceDetailsModel", on_delete=models.CASCADE)
+    file = models.FileField(upload_to='shop/service/gallery', null=True, blank=True)

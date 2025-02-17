@@ -31,20 +31,21 @@ class CompanyDetailsModel(models.Model):
     
 
 
-class CompanyEmployeeDetailsModel(models.Model):
-    company = models.ForeignKey(CompanyDetailsModel, on_delete = models.CASCADE)
-    name = models.CharField(max_length=300)
-    designation = models.CharField(max_length=50, null=True, blank=True)
-    phone_number = models.CharField(max_length=30, null=True, blank=True)
-    salary = models.FloatField(null=True, blank=True)
+# class CompanyEmployeeDetailsModel(models.Model):
+#     shop = models.ForeignKey("shopApp.ShopDetailsModel", on_delete = models.CASCADE)
+#     # company = models.ForeignKey(CompanyDetailsModel, on_delete = models.CASCADE)
+#     name = models.CharField(max_length=300)
+#     designation = models.CharField(max_length=50, null=True, blank=True)
+#     phone_number = models.CharField(max_length=30, null=True, blank=True)
+#     salary = models.FloatField(null=True, blank=True)
 
 
-class CompanyEmployeeRoleManagementModel(models.Model):
-    employee = models.ForeignKey(CompanyEmployeeDetailsModel, on_delete=models.CASCADE)
-    shop = models.ForeignKey("shopApp.ShopDetailsModel", on_delete=models.CASCADE)
-    can_create_product = models.BooleanField(default=False)
-    can_edit_product = models.BooleanField(default=False)
-    can_list_product = models.BooleanField(default=False)
+# class CompanyEmployeeRoleManagementModel(models.Model):
+#     employee = models.ForeignKey(CompanyEmployeeDetailsModel, on_delete=models.CASCADE)
+#     shop = models.ForeignKey("shopApp.ShopDetailsModel", on_delete=models.CASCADE)
+#     can_create_product = models.BooleanField(default=False)
+#     can_edit_product = models.BooleanField(default=False)
+#     can_list_product = models.BooleanField(default=False)
     
 
 

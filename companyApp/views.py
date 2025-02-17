@@ -12,8 +12,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from authapp.models import SendOTPModel
 
-from .serializers import CompanyDetailsModelSerializer, CompanyEmployeeRoleManagementModelSerializer, CompanyEmployeeDetailsModelSerializer
-from .models import CompanyDetailsModel, CompanyEmployeeRoleManagementModel, CompanyEmployeeDetailsModel
+from .serializers import CompanyDetailsModelSerializer
+from .models import CompanyDetailsModel
 from customClasses.CustomBaseModelViewSet import CustomBaseModelViewSet
 class RegisterAsCompanyAPIView(APIView):
     permission_classes = []
@@ -80,12 +80,3 @@ class CompanyDetailsViewSet(viewsets.ModelViewSet):
         context = super().get_serializer_context()
         context['user'] = self.request.user  # Pass the user into the context
         return context
-
-class CompanyEmployeeDetailsModelViewSet(CustomBaseModelViewSet):
-    queryset = CompanyEmployeeDetailsModel.objects.all()
-    serializer_class = CompanyEmployeeDetailsModelSerializer
-
-
-class CompanyEmployeeRoleManagementModelViewSet(viewsets.ModelViewSet):
-    queryset = CompanyEmployeeRoleManagementModel.objects.all()
-    serializer_class = CompanyEmployeeRoleManagementModelSerializer
