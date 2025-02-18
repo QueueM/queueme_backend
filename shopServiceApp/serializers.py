@@ -19,7 +19,15 @@ class ShopServiceDetailsModelSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         time_slots_data = self.context['request'].data.get('time_slots', [])
+        if "specialists" in self.context['request'].data:
+            validated_data.pop("specialists")
         service = ShopServiceDetailsModel.objects.create(**validated_data)
+        specialists_data = self.context['request'].data.get('specialists', [])
+        
+        if specialists_data:
+            service.specialists.set(specialists_data)
+        else:
+            service.specialists.clear()
         
         for slot_data in time_slots_data:
             ShopServiceTimeSlotModel.objects.create(service=service, **slot_data)

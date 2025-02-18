@@ -8,7 +8,7 @@ from companyApp.models import CompanyDetailsModel
 from rest_framework.exceptions import ValidationError
 from shopServiceApp.serializers import ShopServiceCategoryModelSerializer
 from shopServiceApp.models import ShopServiceCategoryModel
-
+from employeeApp.models import EmployeeDetailsModel
 class ShopOpeningHoursModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShopOpeningHoursModel
@@ -19,10 +19,14 @@ class ShopDetailsModelSerializer(serializers.ModelSerializer):
         queryset=ShopServiceCategoryModel.objects.all(),many=True
         )
     opening_hours = ShopOpeningHoursModelSerializer(many=True)
+    employee_count = serializers.SerializerMethodField()
     class Meta:
         model = ShopDetailsModel
         fields = "__all__"
         read_only_fields = ['owner','company']
+    
+    def get_employee_count(self, obj):
+        return EmployeeDetailsModel.objects.filter(shop=obj).count()
     def validate(self, data):
         if self.context['user'] and CompanyDetailsModel.objects.filter(user=self.context['user']).exists():
             data['company'] = CompanyDetailsModel.objects.get(user=self.context['user'])

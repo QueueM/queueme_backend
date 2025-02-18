@@ -33,7 +33,7 @@ class ShopServiceDetailsModel(models.Model):
         IN_SHOP = 'in_shop', 'In Shop'
         AT_HOME = 'at_home', 'At Home'
         BOTH = 'both', "Both"
-
+    shop = models.ForeignKey("shopApp.ShopDetailsModel", on_delete=models.CASCADE, related_name="services")
     service_type = models.CharField(max_length=20, choices=SERVICES_TYPES_CHOICES.choices, default=SERVICES_TYPES_CHOICES.IN_SHOP)
     name = models.CharField(max_length=300)
     name_arabic = models.CharField(max_length=300, default="")
@@ -43,7 +43,7 @@ class ShopServiceDetailsModel(models.Model):
     min_price = models.DecimalField(max_digits=10,decimal_places=2,null=True, blank=True)
     max_price = models.DecimalField(max_digits=10,decimal_places=2,null=True, blank=True)
     duration = models.DecimalField(max_digits=10,decimal_places=2,null=True, blank=True) #in minutes
-    unit = models.CharField(max_length=200)
+    unit = models.CharField(max_length=200, default="", blank=True, null=True)
     number_of_bookings = models.IntegerField()
     is_availabe = models.BooleanField(default=False)
     specialists = models.ManyToManyField("shopApp.ShopSpecialistDetailsModel", related_name="services_assigned", null=True, blank=True)

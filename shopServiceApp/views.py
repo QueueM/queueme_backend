@@ -11,11 +11,13 @@ from rest_framework import filters
 
 from .models import ShopServiceGalleryModel
 from .serializers import ShopServiceGalleryModelSerializer
-from .filters import ShopServiceGalleryFilter, ServiceBookingDetailsFilter
+from .filters import ShopServiceGalleryFilter, ServiceBookingDetailsFilter, ShopServiceDetailsFilter
 
 class ShopServiceDetailsViewSet(CustomBaseModelViewSet):
     queryset = ShopServiceDetailsModel.objects.all()
     serializer_class = ShopServiceDetailsModelSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = ShopServiceDetailsFilter
 
 class ShopServiceCategoryViewSet(CustomBaseModelViewSet):
     queryset = ShopServiceCategoryModel.objects.all()
