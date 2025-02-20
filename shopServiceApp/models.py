@@ -26,7 +26,7 @@ class ShopServiceTimeSlotModel(models.Model):
     end_time = models.TimeField()
 
     def __str__(self):
-        return f"{self.service.name} - {self.get_day_display()} ({self.start_time}"
+        return f"{self.service.name} - {self.day} ({self.start_time}"
 
 class ShopServiceDetailsModel(models.Model):
     class SERVICES_TYPES_CHOICES(models.TextChoices):
