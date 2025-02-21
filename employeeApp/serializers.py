@@ -3,14 +3,19 @@ from rest_framework import serializers
 from .models import EmployeeDetailsModel, EmployeeWorkingHoursModel
 
 from shopApp.models import ShopDetailsModel
-
+from .models import EmployeeRoleManangementModel
 class EmployeeWorkingHoursSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = EmployeeWorkingHoursModel
         # fields = "__all__"
         exclude = ["employee"]
-
+class EmployeeRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EmployeeRoleManangementModel
+        fields = "__all__" 
+    
+    
 
 class EmployeeDetailsSerializer(serializers.ModelSerializer):
     working_hours = EmployeeWorkingHoursSerializer(many=True)

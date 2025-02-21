@@ -26,4 +26,4 @@ class CustomersDetailsModel(models.Model):
     address = models.TextField(default="", null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f"({self.id}) {self.name}"

@@ -44,7 +44,7 @@ class ShopServiceDetailsModel(models.Model):
     max_price = models.DecimalField(max_digits=10,decimal_places=2,null=True, blank=True)
     duration = models.DecimalField(max_digits=10,decimal_places=2,null=True, blank=True) #in minutes
     unit = models.CharField(max_length=200, default="", blank=True, null=True)
-    number_of_bookings = models.IntegerField()
+    # number_of_bookings = models.IntegerField()
     is_availabe = models.BooleanField(default=False)
     specialists = models.ManyToManyField("shopApp.ShopSpecialistDetailsModel", related_name="services_assigned", null=True, blank=True)
 
@@ -61,7 +61,7 @@ class ServiceBookingDetailsModel(models.Model):
         PAID = 'paid', 'Paid'
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bokkings", null=True, blank=True)
-    customer = models.ForeignKey("customersApp.CustomersDetailsModel", on_delete=models.CASCADE, null=True, blank=True)
+    customer = models.ForeignKey("customersApp.CustomersDetailsModel", on_delete=models.CASCADE, null=False, blank=False)
     service = models.ForeignKey(ShopServiceDetailsModel, on_delete=models.CASCADE, related_name="bokkings")
     price = models.FloatField(blank=True)
     specialist = models.ForeignKey("shopApp.ShopSpecialistDetailsModel", on_delete=models.CASCADE, related_name="bokkings", null=True)
@@ -78,10 +78,10 @@ class ServiceBookingDetailsModel(models.Model):
     booking_place = models.CharField(max_length=20, choices=ShopServiceDetailsModel.SERVICES_TYPES_CHOICES.choices, default=ShopServiceDetailsModel.SERVICES_TYPES_CHOICES.IN_SHOP)
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES.choices, default=PAYMENT_STATUS_CHOICES.UNPAID)
     def save(self, *args, **kwargs):
-        if self.user.customer :
-            self.customer = self.user.customer
-        else :
-            raise ValidationError(f"User is not a Customer")
+        # if self.user.customer :
+        #     self.customer = self.user.customer
+        # else :
+        #     raise ValidationError(f"User is not a Customer")
         if not self.price:
             self.price = self.service.price
         if self.discount_coupon != "":

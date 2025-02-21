@@ -5,10 +5,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 
 from rest_framework import viewsets
-from .models import ShopDetailsModel, ShopPermissionsModel, ShopGalleryImagesModel, ShopSpecialistDetailsModel
-from .serializers import ShopDetailsModelSerializer, ShopPermissionsModelSerializer, ShopGalleryImagesModelSerializer, ShopSpecialistDetailsModelSerializer
+from .models import ShopDetailsModel, ShopPermissionsModel, ShopGalleryImagesModel, ShopSpecialistDetailsModel, SpecialistTypesModel
+from .serializers import ShopDetailsModelSerializer, ShopPermissionsModelSerializer, ShopGalleryImagesModelSerializer, ShopSpecialistDetailsModelSerializer, SpecialstTypesSerializer
 from customClasses.CustomBaseModelViewSet import CustomBaseModelViewSet
-from .filters import ShopGalleryImagesFilter, ShopDetailsViewsetFilter
+from .filters import ShopGalleryImagesFilter, ShopDetailsViewsetFilter, ShopSpecialistDetailsFilter
 class ShopDetailsViewSet(CustomBaseModelViewSet):
     queryset = ShopDetailsModel.objects.all()
     serializer_class = ShopDetailsModelSerializer
@@ -39,3 +39,9 @@ class ShopGalleryImagesModelViewSet(viewsets.ModelViewSet):
 class ShopSpecialistDetailsModelViewSet(CustomBaseModelViewSet):
     queryset = ShopSpecialistDetailsModel.objects.all()
     serializer_class = ShopSpecialistDetailsModelSerializer
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = ShopSpecialistDetailsFilter
+
+class SpecialistTypesModelViewSet(CustomBaseModelViewSet):
+    queryset = SpecialistTypesModel.objects.all()
+    serializer_class = SpecialstTypesSerializer

@@ -82,18 +82,36 @@ class ShopGalleryImagesModel(models.Model):
     shop = models.ForeignKey(ShopDetailsModel, on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/shopgallery')
 
-class ShopSpecialistDetailsModel(models.Model):
-    GENDER_CHOICES = [
-        ('male', 'Male'),
-        ('female', 'Female'),
-    ]
-    employee = models.OneToOneField("employeeApp.EmployeeDetailsModel", on_delete=models.CASCADE, related_name="specialist")
+class SpecialistTypesModel(models.Model):
     name = models.CharField(max_length=300)
+
+    def __str__(self):
+        return f"({self.id}){self.name}"
+
+class ShopSpecialistDetailsModel(models.Model):
+    # GENDER_CHOICES = [
+    #     ('male', 'Male'),
+    #     ('female', 'Female'),
+    # ]
+    class SERVICE_LOCATION_CHOICES(models.TextChoices):
+        IN_STORE = 'in_store', 'In Store'
+        AT_SHOP = 'at_shop', 'At Shop'
+        BOTH = 'both', "Both"
+    employee = models.OneToOneField("employeeApp.EmployeeDetailsModel", on_delete=models.CASCADE, related_name="specialist")
+    # name = models.CharField(max_length=300)
     speciality = models.CharField(max_length=300)
-    shop = models.ForeignKey(ShopDetailsModel, on_delete=models.CASCADE)
-    phone_number = models.CharField(max_length=20)
-    gender = models.CharField(max_length=20, choices=GENDER_CHOICES)
+    shop = models.ManyToManyField(ShopDetailsModel)
+    # phone_number = models.CharField(max_length=20)
+    # gender = models.CharField(max_length=20, choices=GENDER_CHOICES)
+    service_locatioin = models.CharField( max_length=20, choices=SERVICE_LOCATION_CHOICES.choices, default=SERVICE_LOCATION_CHOICES.BOTH)
+    specialist_type = models.ManyToManyField(SpecialistTypesModel)
+    services = models.ManyToManyField("shopServiceApp.ShopServiceDetailsModel")
+    is_active = models.BooleanField(default=True)
+    avatar_image = models.ImageField(upload_to='specialist/avatar_image/', null=True, blank=True)
     rating = models.FloatField(default=0.0)
+
+    def __str__(self):
+        return f"({self.id}){self.employee.name}"
 
 
 
