@@ -12,11 +12,14 @@ class ShopServiceTimeSlotSerializer(serializers.ModelSerializer):
 
 class ShopServiceDetailsModelSerializer(serializers.ModelSerializer):
     time_slots = ShopServiceTimeSlotSerializer(source='available_time_slots', many=True, read_only=True)
-
+    bookings_count = serializers.SerializerMethodField()
     class Meta:
         model = ShopServiceDetailsModel
         fields = '__all__'
 
+    def get_bookings_count(self, obj):
+        return ServiceBookingDetailsModel.objects.filter(service=obj).count()
+    
     def create(self, validated_data):
         time_slots_data = self.context['request'].data.get('time_slots', [])
         if "specialists" in self.context['request'].data:
