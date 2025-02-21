@@ -52,7 +52,6 @@ INSTALLED_APPS = [
 
     'rest_framework',
     "corsheaders",
-    'storages', # s3 bucket 
 
     'usersapp',
     'authapp',
@@ -63,6 +62,7 @@ INSTALLED_APPS = [
     'subscriptionApp',
     'reelsApp',
     'employeeApp',
+    'storages', # s3 bucket
 ]
 
 MIDDLEWARE = [
@@ -73,6 +73,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 MIDDLEWARE += [
     "corsheaders.middleware.CorsMiddleware",
@@ -180,8 +181,16 @@ SIMPLE_JWT = {
 # ]
 CORS_ALLOW_ALL_ORIGINS = True
 
-
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # Local Static Files
+    },
+}
 import os
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # AWS Credentials
 AWS_ACCESS_KEY_ID = 'AKIAXEVXY3YZA43EF7N7'
@@ -195,9 +204,6 @@ AWS_QUERYSTRING_AUTH = False
 
 # Media Settings
 MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
-# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
 
 
 # DEFAULT_FILE_STORAGE = 'salonAppBackend.storages.MediaStorage'
