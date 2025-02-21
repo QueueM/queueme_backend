@@ -9,11 +9,16 @@ from rest_framework.exceptions import ValidationError
 from shopServiceApp.serializers import ShopServiceCategoryModelSerializer
 from shopServiceApp.models import ShopServiceCategoryModel
 from employeeApp.models import EmployeeDetailsModel
+from .models import SpecialistTypesModel
 class ShopOpeningHoursModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShopOpeningHoursModel
         # fields = "__all__"
         exclude = ["shop"]
+class SpecialstTypesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SpecialistTypesModel
+        fields ="__all__"
 class ShopDetailsModelSerializer(serializers.ModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(
         queryset=ShopServiceCategoryModel.objects.all(),many=True
