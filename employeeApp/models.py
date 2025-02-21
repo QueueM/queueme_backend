@@ -55,6 +55,8 @@ class EmployeeDetailsModel(models.Model):
                 self.employee_id = f"{self.shop.username}-1"
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"({self.id}) {self.name}"
 
 class EmployeeRoleManangementModel(models.Model):
     name = models.CharField(max_length=300)
