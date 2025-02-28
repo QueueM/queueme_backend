@@ -1,6 +1,15 @@
-from django.urls import path
 
+
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from .views import ReelsViewSet, CommentViewSet
+
+router = DefaultRouter()
+router.register(r'reels', ReelsViewSet)
+router.register(r'comments', CommentViewSet)
 
 urlpatterns = [
-    # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('', include(router.urls)),
+    # path('register/', RegisterAsCompanyAPIView.as_view())
+    
 ]

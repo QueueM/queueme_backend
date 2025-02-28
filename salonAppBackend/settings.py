@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'subscriptionApp',
     'reelsApp',
     'employeeApp',
+    'notificationsapp',
     'storages', # s3 bucket
 ]
 
@@ -164,7 +165,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     # 
-    'EXCEPTION_HANDLER': 'customClasses.CustomExceptionHandler.custom_exception_handler',
+    # 'EXCEPTION_HANDLER': 'customClasses.CustomExceptionHandler.custom_exception_handler',
 }
 
 from datetime import timedelta

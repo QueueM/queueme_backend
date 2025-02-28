@@ -105,6 +105,7 @@ class ServiceBookingDiscountCouponsModel(models.Model):
     class DISCOUNT_TYPE_CHOICES(models.TextChoices):
         PERCENTAGE = 'percentage', 'Percentage'
         AMOUNT = 'amount', 'Amount'
+    shop = models.ForeignKey("shopApp.ShopDetailsModel", on_delete=models.CASCADE)
     code = models.CharField(max_length=20)
     discount_type = models.CharField(
         max_length=10,

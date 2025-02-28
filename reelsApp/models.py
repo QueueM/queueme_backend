@@ -8,3 +8,20 @@ class ReelsModel(models.Model):
     caption = models.TextField(blank=True)
     likes = models.ManyToManyField(User, related_name='liked_reels', blank=True)  # Track who liked
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def like_count(self):
+        return self.likes.count()
+
+class CommentsModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reel = models.ForeignKey(ReelsModel, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    likes = models.ManyToManyField(User, related_name='liked_comments', blank=True)  # Track who liked
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+
+    def like_count(self):
+        return self.likes.count()
+
+    def is_reply(self):
+        return self.parent is not None
