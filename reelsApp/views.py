@@ -4,10 +4,15 @@ from rest_framework.decorators import action
 from .models import ReelsModel, CommentsModel
 from .serializers import ReelSerializer, CommentSerializer
 from customClasses.CustomBaseModelViewSet import CustomBaseModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
+from .filters import ReelsFilter, ReelsCommentsFilter
 class ReelsViewSet(CustomBaseModelViewSet):
     queryset = ReelsModel.objects.all().order_by('-created_at')
     serializer_class = ReelSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = ReelsFilter
     
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -30,6 +35,8 @@ class CommentViewSet(CustomBaseModelViewSet):
     queryset = CommentsModel.objects.filter(parent=None).order_by('-created_at')  # Only fetch top-level comments
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = ReelsCommentsFilter
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
