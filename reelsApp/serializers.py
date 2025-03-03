@@ -5,7 +5,7 @@ from customersApp.models import CustomersDetailsModel
 from usersapp.serializers import UserSerializer
 from customersApp.models import CustomersDetailsModel
 from customersApp.serializers import CustomersDetailsModelSerializer
-
+from .models import StoryModel
 
 class ReelSerializer(serializers.ModelSerializer):
     # user = serializers.ReadOnlyField(source='user.username')
@@ -45,3 +45,8 @@ class CommentSerializer(serializers.ModelSerializer):
             return CommentSerializer(obj.replies.all(), many=True).data
             # return obj.replies.all()
         return []
+
+class StorySerilaizer(serializers.ModelSerializer):
+    class Meta:
+        model = StoryModel
+        fields = "__all__"

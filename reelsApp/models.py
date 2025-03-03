@@ -25,3 +25,20 @@ class CommentsModel(models.Model):
 
     def is_reply(self):
         return self.parent is not None
+    
+
+class StoryModel(models.Model):
+    shop = models.ForeignKey(ShopDetailsModel, verbose_name="Reels", on_delete=models.CASCADE)
+    video = models.FileField(upload_to='reels/')
+    # likes = models.ManyToManyField(User, related_name='liked_reels', blank=True)  # Track who liked
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # def like_count(self):
+    #     return self.likes.count()
+class StoryViewedModel(models.Model):
+    story = models.ForeignKey(StoryModel, on_delete=models.CASCADE, related_name="views")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    viewd_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('story', 'user') # Ensure a user can't view a story multiple times

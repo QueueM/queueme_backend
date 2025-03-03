@@ -1,12 +1,14 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import ReelsModel, CommentsModel
+from .models import ReelsModel, CommentsModel, StoryModel
 from .serializers import ReelSerializer, CommentSerializer
 from customClasses.CustomBaseModelViewSet import CustomBaseModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from .filters import ReelsFilter, ReelsCommentsFilter
+from .filters import ReelsFilter, ReelsCommentsFilter, StoryFilter
+from rest_framework.permissions import IsAuthenticated
+from .serializers import StorySerilaizer
 class ReelsViewSet(CustomBaseModelViewSet):
     queryset = ReelsModel.objects.all().order_by('-created_at')
     serializer_class = ReelSerializer
@@ -63,3 +65,28 @@ class CommentViewSet(CustomBaseModelViewSet):
             comment.likes.add(request.user)
             serializer = ReelSerializer(comment)
             return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class StoryViewSet(CustomBaseModelViewSet):
+    queryset = StoryModel.objects.order_by('-created_at')  # Only fetch top-level comments
+    serializer_class = StorySerilaizer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_class = StoryFilter
+    
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="get-stories-list", url_name="get-stories-list",
+    )
+    def test(self, request, *args, **kwargs):
+
+        return 
+    
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="like-reels", url_name="like-reels",
+    )
+    def test2(self, request, *args, **kwargs):
+        return
