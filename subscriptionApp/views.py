@@ -8,8 +8,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from . import helpers
-
+from rest_framework import permissions
 class CompanySubscriptionPlanViewSet(CustomBaseModelViewSet):
+    permission_classes = [permissions.AllowAny]
     queryset = CompanySubscriptionPlansModel.objects.all()
     serializer_class = CompanySubscriptionPlansModelsSerializer
 
