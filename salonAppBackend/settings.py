@@ -63,6 +63,9 @@ INSTALLED_APPS = [
     'reelsApp',
     'employeeApp',
     'notificationsapp',
+    'adsApp',
+    'chatApp',
+    'channels',
     'storages', # s3 bucket
 ]
 
@@ -165,7 +168,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     # 
-    # 'EXCEPTION_HANDLER': 'customClasses.CustomExceptionHandler.custom_exception_handler',
+    'EXCEPTION_HANDLER': 'customClasses.CustomExceptionHandler.custom_exception_handler',
 }
 
 from datetime import timedelta
@@ -212,3 +215,10 @@ MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 CSRF_TRUSTED_ORIGINS = [
     "https://api.queueme.net",
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
+ASGI_APPLICATION = "salonAppBackend.asgi.application"

@@ -59,6 +59,7 @@ class ShopDetailsModel(models.Model):
     customers_type = models.CharField(choices=TARGET_CUSTOMER_CHOICES.choices, max_length=300, default=TARGET_CUSTOMER_CHOICES.BOTH)
     services_types = models.CharField(choices=SERVICES_TYPES_CHOICES.choices, max_length=300, default=SERVICES_TYPES_CHOICES.IN_SHOP)
     categories = models.ManyToManyField(ShopServiceCategoryModel, related_name="shops", blank=True, null=True)  # Many-to-Many relationship
+    credits = models.DecimalField(max_digits=10, decimal_places=2, help_text="Credits for ads and other things", default=0.0)
 
 
 

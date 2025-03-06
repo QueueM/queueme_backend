@@ -27,5 +27,7 @@ urlpatterns = [
     path('reels/', include('reelsApp.urls')),
     path('employees/', include('employeeApp.urls')),
     path('notifications/', include('notificationsapp.urls')),
-    path('subscriptions/', include('subscriptionApp.urls'))
+    path('subscriptions/', include('subscriptionApp.urls')),
+    path('ads/', include('adsApp.urls')),
+    path('chat/', include('chatApp.urls'))
 ]
