@@ -17,6 +17,8 @@ class ShopAdsModel(models.Model):
     is_active = models.BooleanField(default=True)
     start_date = models.DateTimeField(default=now)
     end_date = models.DateTimeField()
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
 
     def deduct_budget(self, views_count=1):
         """Deduct budget based on the number of views."""
