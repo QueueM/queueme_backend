@@ -1,12 +1,12 @@
 from django.db import models
 
+
 class Payment(models.Model):
 
     PAYMENT_TYPE_CHOICES = (
         ('card', 'Card'),
         ('applepay', 'Apple Pay'),
     )
-
 
     STATUS_CHOICES = (
         ('initiated', 'Initiated'),
