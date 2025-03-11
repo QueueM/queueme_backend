@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'employeeApp',
     'notificationsapp',
     'adsApp',
+    'paymentsApp',
     'chatApp',
     'channels',
     'storages', # s3 bucket
