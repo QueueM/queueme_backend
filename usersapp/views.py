@@ -107,3 +107,34 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfileModel.objects.all()
     serializer_class = UserProfileModelSerializer
     pagination_class = CustomPageNumberPagination
+
+
+from customersApp.models import CustomersDetailsModel
+from customersApp.serializers import CustomersDetailsModelSerializer
+from companyApp.models import CompanyDetailsModel
+from companyApp.serializers import CompanyDetailsModelSerializer
+from employeeApp.models import EmployeeDetailsModel
+from employeeApp.serializers import EmployeeDetailsSerializer
+class UserMasterDetailsAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        # Get customer details if they exist
+        customer = CustomersDetailsModel.objects.filter(user=user).first()
+        customer_data = CustomersDetailsModelSerializer(customer).data if customer else None
+
+        # Get company details if they exist
+        company = CompanyDetailsModel.objects.filter(user=user).first()
+        company_data = CompanyDetailsModelSerializer(company).data if company else None
+
+        # Get employee details if they exist
+        employee = EmployeeDetailsModel.objects.filter(user=user).first()
+        employee_data = EmployeeDetailsSerializer(employee).data if employee else None
+
+        return Response({
+            "customer_details": customer_data,
+            "company_details": company_data,
+            "employee_details": employee_data
+        })

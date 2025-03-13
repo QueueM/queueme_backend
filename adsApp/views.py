@@ -50,7 +50,7 @@ class ShopAdViewSet(CustomBaseModelViewSet):
 
         ads = ShopAdsModel.objects.filter(
             is_active=True,
-            # end_date__gte=now(),
+            end_date__gte=now(),
         )
 
         ads = ads.filter(Q(target_gender=user_gender) | Q(target_gender="both"))
