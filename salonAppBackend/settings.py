@@ -11,20 +11,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+from datetime import timedelta
+import os
 import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
-# import logging
-
-# logging.basicConfig(level=logging.DEBUG)
-# logging.basicConfig(level=logging.DEBUG)
-# logging.getLogger('boto3').setLevel(logging.DEBUG)
-# logging.getLogger('botocore').setLevel(logging.DEBUG)
-# logging.getLogger('django').setLevel(logging.INFO) 
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -43,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+     "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -65,7 +58,7 @@ INSTALLED_APPS = [
     'notificationsapp',
     'adsApp',
     'chatApp',
-    'channels',
+    
     'storages', # s3 bucket
 ]
 
@@ -102,7 +95,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'salonAppBackend.wsgi.application'
+# WSGI_APPLICATION = 'salonAppBackend.wsgi.application'
 
 
 # Database
@@ -171,7 +164,7 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'customClasses.CustomExceptionHandler.custom_exception_handler',
 }
 
-from datetime import timedelta
+
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=144000),
@@ -193,7 +186,7 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",  # Local Static Files
     },
 }
-import os
+
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # AWS Credentials

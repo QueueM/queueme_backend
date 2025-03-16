@@ -8,7 +8,7 @@ from django.utils.timezone import now
 from datetime import timedelta
 from django.utils import timezone
 
-
+# ignoreing
 class UserSubscriptionPlansModels(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
@@ -18,7 +18,7 @@ class UserSubscriptionPlansModels(models.Model):
     def __str__(self):
         return self.name
 
-
+# Ignoring
 class UserSubscriptionDetailsModel(models.Model):
     subscription_plan = models.OneToOneField(UserSubscriptionPlansModels, on_delete=models.CASCADE)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -37,7 +37,8 @@ class UserSubscriptionDetailsModel(models.Model):
     
     # def __str__(self):
     #     return f"{self.company.name} - {self.plan.name}"
-    
+
+# plan  Model 
 class CompanySubscriptionPlansModel(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
@@ -53,6 +54,9 @@ class CompanySubscriptionPlansModel(models.Model):
     def __str__(self):
         return self.name
 
+
+
+# Subscription Model for the company
 class CompanySubscriptionDetailsModel(models.Model):
     plan = models.ForeignKey(CompanySubscriptionPlansModel, on_delete=models.CASCADE, related_name='subscription_plan')
     company = models.OneToOneField(CompanyDetailsModel, on_delete=models.CASCADE, related_name='company')
