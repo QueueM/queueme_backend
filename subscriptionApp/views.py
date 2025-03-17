@@ -48,14 +48,22 @@ class CompanySubscriptionDetailsViewSet(CustomBaseModelViewSet):
 # payment 
 class PaymentApiView(APIView):
     permission_classes = [permissions.AllowAny]
+    
+    # ==== Moyasar Payment Gateway ==== #
     secrect_key = config('MOYASAR_SECRET')
     api_key = config('MOYASAR_PUBLIC')
     callback_url = config('MOYASAR_CALLBACK_URL')
+    moyasar = Mayasar(api_key, secrect_key, callback_url)
+    # ==== Moyasar Payment Gateway ==== #
+    
+    def get(self,request):
+        get_all_payment = self.moyasar.get_payment()
+        return Response(get_all_payment)
     
     def post(self,request):
         data = request.data
-        moyasar = Mayasar(self.api_key, self.secrect_key, self.callback_url)
-        payment = moyasar.payment(data['amount'], data['description'], data['source'])
+      
+        payment = self.moyasar.payment(data['amount'], data['description'], data['source'])
         return Response(payment)
         
         
