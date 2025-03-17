@@ -62,7 +62,6 @@ class PaymentApiView(APIView):
     
     def post(self,request):
         data = request.data
-      
         payment = self.moyasar.payment(data['amount'], data['description'], data['source'])
         return Response(payment)
         
