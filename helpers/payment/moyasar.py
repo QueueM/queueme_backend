@@ -2,7 +2,7 @@ import requests
 import json
 
 
-class Mayasar:
+class Moyasar:
     """
     Moyasar Payment Gateway Integration
 
@@ -43,17 +43,23 @@ class Mayasar:
         self._payment_method = "creditcard"
         self._auth = (self.secret_key, "")  # Use secret key for authentication
 
-    def payment(self, amount, description, source):
+    def payment(self, amount, **kwargs):
         """Initiates a payment transaction."""
         try:
+            source:dict = kwargs.get("source")
+            metadata:dict = kwargs.get('metadata')
             payment_body = {
                 "amount": amount,
                 "currency": self._currency,
-                "description": description,
+                "description": kwargs.get("description" , f'Plan {metadata.get("type" ,"payment")}'),
                 "callback_url": self.callback_url,
+                "metadata":{
+                   **metadata
+                },
                 "source": {
                     "type": self._payment_method,
-                    **source,
+                    **source
+             
                 },
             }
             headers = {"Content-Type": "application/json"}

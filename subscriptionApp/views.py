@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from . import helpers
 from rest_framework import permissions
-from  helpers.payment.moyasar import Mayasar
+from  helpers.payment.moyasar import Moyasar
 from  decouple import config
 
 
@@ -53,7 +53,7 @@ class PaymentApiView(APIView):
     secrect_key = config('MOYASAR_SECRET')
     api_key = config('MOYASAR_PUBLIC')
     callback_url = config('MOYASAR_CALLBACK_URL')
-    moyasar = Mayasar(api_key, secrect_key, callback_url)
+    moyasar = Moyasar(api_key, secrect_key, callback_url)
     # ==== Moyasar Payment Gateway ==== #
     
     def get(self,request):
@@ -61,8 +61,17 @@ class PaymentApiView(APIView):
         return Response(get_all_payment)
     
     def post(self,request):
-        data = request.data
-        payment = self.moyasar.payment(data['amount'], data['description'], data['source'])
-        return Response(payment)
-        
+        try:
+            data = request.data
+            ammount = data.get("amount")
+            metadata = data.get("metadata")
+            source = data.get("source")
+            description = data.get("description")
+            if  int(ammount) <=0:
+                return Response("Price can't be zero" ,status=400)
+
+            payment = self.moyasar.payment(amount=ammount , metadata=metadata ,source=source ,  description=description)
+            return Response({"status":payment.get("status"),"transaction_url":payment},status=200)
+        except Exception as e:
+            return Response({"error":str(e)} , status=400)
         

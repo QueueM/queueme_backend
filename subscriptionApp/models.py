@@ -60,38 +60,31 @@ class CompanySubscriptionPlansModel(models.Model):
 class CompanySubscriptionDetailsModel(models.Model):
     plan = models.ForeignKey(CompanySubscriptionPlansModel, on_delete=models.CASCADE, related_name='subscription_plan')
     company = models.OneToOneField(CompanyDetailsModel, on_delete=models.CASCADE, related_name='company')
+    payment_id = models.CharField(max_length=255 ,  null=True ,  blank=True )
     start_date = models.DateTimeField(default=now)
     end_date = models.DateTimeField()
     is_active = models.BooleanField(default=True)
 
-    def save(self, *args, **kwargs):
-        if not self.end_date:
-            self.end_date = self.start_date + timedelta(days=self.plan.duration_days)
-        super().save(*args, **kwargs)
-    
-    def is_active(self):
-        return self.end_date >= now() and self.is_active
-    
-    def upgrade_plan(self, new_plan):
-        """Upgrade to a higher plan"""
-        self.is_active = False  # Deactivate current plan
-        self.save()
+    def save(self,*args, **kwargs):
+        if not  self.pk:
+            self.start_date = timezone.now()
+            self.end_date = self.start_date + timezone(days=self.plan.duration_days)
+            return super().save(*args, **kwargs)
         
-        # Calculate remaining days
-        remaining_days = (self.end_date - timezone.now()).days
-        remaining_value = (self.plan.price / self.plan.duration_days) * remaining_days
         
-        # New subscription
-        new_subscription = CompanySubscriptionDetailsModel.objects.create(
-            company=self.company,
-            plan=new_plan,
-            start_date=timezone.now(),
-            end_date=timezone.now() + timedelta(days=new_plan.duration_days)
-        )
+    def _calculate_useused_days_price(self):
+            remaining_days = (self.end_date - timezone.now()).days
+            if remaining_days < 0:
+                remaining_days = 0  
+            per_day_price = self.plan.price / self.plan.duration_days
+            return per_day_price * remaining_days
 
-        return new_subscription, remaining_value  # Return the new subscription & credit amount (if needed)
-        
     
+    def have_to_pay(self ,new_plan_price):
+        remaining_balance = self._calculate_unused_days_price()
+        
+        return new_plan_price - remaining_balance
+        
     def __str__(self):
         return f"{self.company.name} - {self.plan.name}"
         

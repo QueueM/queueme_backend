@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from helpers.payment.callback import MoyasarCallBack
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,5 +30,6 @@ urlpatterns = [
     path('notifications/', include('notificationsapp.urls')),
     path('subscriptions/', include('subscriptionApp.urls')),
     path('ads/', include('adsApp.urls')),
-    path('chat/', include('chatApp.urls'))
+    path('chat/', include('chatApp.urls')),
+    path('payment/webhook/',MoyasarCallBack.as_view(),name="payment_callback")
 ]
