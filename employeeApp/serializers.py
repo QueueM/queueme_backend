@@ -19,6 +19,7 @@ class EmployeeRoleSerializer(serializers.ModelSerializer):
 
 class EmployeeDetailsSerializer(serializers.ModelSerializer):
     working_hours = EmployeeWorkingHoursSerializer(many=True)
+    roles = serializers.SerializerMethodField()
     class Meta:
         model = EmployeeDetailsModel
         fields = "__all__"
@@ -26,6 +27,10 @@ class EmployeeDetailsSerializer(serializers.ModelSerializer):
     def validate(self, data):
         return data
     
+    def get_roles(self, obj):
+        """Return a list of roles or an empty list if none exist."""
+        roles = obj.roles.all()  # Fetch related roles using related_name="role"
+        return EmployeeRoleSerializer(roles, many=True).data if roles.exists() else []
     def create(self, validated_data):
         opening_hours_data = validated_data.pop('working_hours', [])
         employee = EmployeeDetailsModel.objects.create(**validated_data)

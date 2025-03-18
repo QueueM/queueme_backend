@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 # Create your models here.
-
+from django.core.exceptions import ValidationError
 from shopApp.models import ShopDetailsModel
 
 class EmployeeWorkingHoursModel(models.Model):
@@ -61,7 +61,8 @@ class EmployeeDetailsModel(models.Model):
 class EmployeeRoleManangementModel(models.Model):
     name = models.CharField(max_length=300)
     shop = models.ForeignKey(ShopDetailsModel, on_delete=models.CASCADE, related_name="role")
-    employee = models.ForeignKey(EmployeeDetailsModel, on_delete=models.CASCADE, related_name="role")
+    # employee = models.ForeignKey(EmployeeDetailsModel, on_delete=models.CASCADE, related_name="role", null=True, blank=True)
+    employees = models.ManyToManyField(EmployeeDetailsModel, related_name="roles")
     can_edit_shop = models.BooleanField(default=False)
     can_add_services = models.BooleanField(default=False)
     can_edit_services = models.BooleanField(default=False)
@@ -72,8 +73,17 @@ class EmployeeRoleManangementModel(models.Model):
     can_edit_specialist = models.BooleanField(default=False)
     can_delete_specialist = models.BooleanField(default=False)
 
-    class Meta:
-        unique_together = ('shop', 'employee')
+    # class Meta:
+    #     unique_together = ('shop', 'employee')
+
+    def clean(self):
+        """
+        Ensures that an employee has only one role per shop.
+        """
+        for employee in self.employees.all():
+            existing_roles = EmployeeRoleManangementModel.objects.filter(shop=self.shop, employees=employee).exclude(id=self.id)
+            if existing_roles.exists():
+                raise ValidationError(f"Employee {employee.name} already has a role in shop {self.shop.name}.")
 
     def __str__(self):
-        return f"{self.employee} - {self.shop} - {self.name}"
+        return f"{self.shop} - {self.name}"

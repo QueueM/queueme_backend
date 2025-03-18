@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from authapp.models import SendOTPModel
 
 from .models import UserProfileModel
-from .serializers import UserProfileModelSerializer
+from .serializers import UserProfileModelSerializer, UserSerializer
 from helpers.PaginationClass import CustomPageNumberPagination
 class Helper:
     def checkForKeys(keyList, requestBody):
@@ -121,6 +121,8 @@ class UserMasterDetailsAPIView(APIView):
     def get(self, request):
         user = request.user
 
+        user_data = UserSerializer(user).data if user else None
+
         # Get customer details if they exist
         customer = CustomersDetailsModel.objects.filter(user=user).first()
         customer_data = CustomersDetailsModelSerializer(customer).data if customer else None
@@ -134,6 +136,7 @@ class UserMasterDetailsAPIView(APIView):
         employee_data = EmployeeDetailsSerializer(employee).data if employee else None
 
         return Response({
+            "user" : user_data,
             "customer_details": customer_data,
             "company_details": company_data,
             "employee_details": employee_data

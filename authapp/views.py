@@ -12,6 +12,13 @@ from django.contrib.auth.models import User
 from .serializers import RegisterSerializer
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken
+from companyApp.models import CompanyDetailsModel
+from customersApp.models import CustomersDetailsModel
+from employeeApp.models import EmployeeDetailsModel
+from companyApp.serializers import CompanyDetailsModelSerializer
+from customersApp.serializers import CustomersDetailsModelSerializer
+from employeeApp.serializers import EmployeeDetailsSerializer
+from usersapp.serializers import UserSerializer
 class RegistrationOTPAPIView(APIView):
     permission_classes = []
     def get(self, request):
@@ -31,7 +38,12 @@ class RegistrationOTPAPIView(APIView):
         type = request.GET['otp_type']
         otpRecord = SendOTPModel(phone_number=phone_number, otp=otp, otp_type=type, otp_mode='phone')
         # serializer = SendOTPModelSerializer(data = {"phone_number":phone_number, "otp":otp, "otp_type":type, "otp_mode":"phone"} )
-        
+        if User.objects.filter(username=phone_number).exists():
+            pass
+        else :
+            user = User(username=phone_number)
+            user.set_password("amanadmin")
+            user.save()
         oldOTP = SendOTPModel.objects.filter(phone_number=phone_number)
         if oldOTP.exists():
             oldOTP.delete()
@@ -140,13 +152,32 @@ class LoginWithOTPAPIView(APIView):
         otpRecord = SendOTPModel.objects.filter(otp=otp, phone_number=phone_number)
         if not otpRecord.exists():
             return Response({"message" : "Invalid OTP !!"},status=status.HTTP_400_BAD_REQUEST)
-        
+        otpRecord.first().delete()
         refresh = RefreshToken.for_user(user)
         access_token = refresh.access_token
+
+        user_data = UserSerializer(user).data if user else None
+
+        # Get customer details if they exist
+        customer = CustomersDetailsModel.objects.filter(user=user).first()
+        customer_data = CustomersDetailsModelSerializer(customer).data if customer else None
+
+        # Get company details if they exist
+        company = CompanyDetailsModel.objects.filter(user=user).first()
+        company_data = CompanyDetailsModelSerializer(company).data if company else None
+
+        # Get employee details if they exist
+        employee = EmployeeDetailsModel.objects.filter(user=user).first()
+        employee_data = EmployeeDetailsSerializer(employee).data if employee else None
+
         return Response(
                 {
+                    "user_details" : user_data,
                     "access": str(access_token),
-                    "refresh": str(refresh)
+                    "refresh": str(refresh),
+                    "customer_details": customer_data,
+                    "company_details": company_data,
+                    "employee_details": employee_data
                 }, 
                 status=status.HTTP_200_OK
             )
