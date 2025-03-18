@@ -56,11 +56,32 @@ class CompanySubscriptionPlansModel(models.Model):
 
 
 
+class Payment(models.Model):
+    class payaed_for_choices(models.TextChoices):
+        SUBSCRIPTION = 's', "Subscription"
+        AD_SERVICE = "ad", "Ad Service"
+        BOOKING = "b", "Booking"
+    class Payment_type_choices(models.TextChoices):
+        Payment = 'p', "Payment"
+        Upgrade  = "u", "Upgrade"
+    payemnt_id = models.CharField(max_length=255)
+    amount = models.DecimalField(decimal_places=2, max_digits=10)   
+    status = models.CharField(max_length=255)
+    payment_type = models.CharField(max_length=1, choices=Payment_type_choices.choices)
+    payed_for =  models.CharField(max_length=3, choices=payaed_for_choices.choices)
+    creatd_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.payed_for} - {self.amount} - {self.status}"
+    
+    
+    
+
 # Subscription Model for the company
 class CompanySubscriptionDetailsModel(models.Model):
     plan = models.ForeignKey(CompanySubscriptionPlansModel, on_delete=models.CASCADE, related_name='subscription_plan')
     company = models.OneToOneField(CompanyDetailsModel, on_delete=models.CASCADE, related_name='company')
-    payment_id = models.CharField(max_length=255 ,  null=True ,  blank=True )
+    payemt =  models.ForeignKey(Payment, on_delete=models.CASCADE, related_name='payment' , null=True, blank=True)
     start_date = models.DateTimeField(default=now)
     end_date = models.DateTimeField()
     is_active = models.BooleanField(default=True)
@@ -68,7 +89,7 @@ class CompanySubscriptionDetailsModel(models.Model):
     def save(self,*args, **kwargs):
         if not  self.pk:
             self.start_date = timezone.now()
-            self.end_date = self.start_date + timezone(days=self.plan.duration_days)
+            self.end_date = self.start_date + timezone.timedelta(days=self.plan.duration_days)
             return super().save(*args, **kwargs)
         
         
@@ -81,9 +102,7 @@ class CompanySubscriptionDetailsModel(models.Model):
 
     
     def have_to_pay(self ,new_plan_price):
-        remaining_balance = self._calculate_unused_days_price()
-        
-        return new_plan_price - remaining_balance
+        return new_plan_price - self.plan.price
         
     def __str__(self):
         return f"{self.company.name} - {self.plan.name}"

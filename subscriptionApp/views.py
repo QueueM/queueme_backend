@@ -1,8 +1,13 @@
 # Create your views here.
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView,CreateAPIView
 from customClasses.CustomBaseModelViewSet import CustomBaseModelViewSet
 from .models import CompanySubscriptionPlansModel, CompanySubscriptionDetailsModel
-from .serializers import CompanySubscriptionDetailsModelSerializer, CompanySubscriptionPlansModelsSerializer
+from .serializers import(
+    CompanySubscriptionDetailsModelSerializer, 
+    CompanySubscriptionPlansModelsSerializer,
+    PaymentSerializer
+    )
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,6 +15,7 @@ from . import helpers
 from rest_framework import permissions
 from  helpers.payment.moyasar import Moyasar
 from  decouple import config
+
 
 
 class CompanySubscriptionPlanViewSet(CustomBaseModelViewSet):
@@ -45,33 +51,17 @@ class CompanySubscriptionDetailsViewSet(CustomBaseModelViewSet):
     
 
 
-# payment 
-class PaymentApiView(APIView):
-    permission_classes = [permissions.AllowAny]
+# payment APi view
+class PaymentCreateApiView(CreateAPIView):
+    serializer_class = PaymentSerializer
+    def  get_serializer_context(self):
+        context =  super().get_serializer_context()
+        context["request"] = self.request
+        return context
     
-    # ==== Moyasar Payment Gateway ==== #
-    secrect_key = config('MOYASAR_SECRET')
-    api_key = config('MOYASAR_PUBLIC')
-    callback_url = config('MOYASAR_CALLBACK_URL')
-    moyasar = Moyasar(api_key, secrect_key, callback_url)
-    # ==== Moyasar Payment Gateway ==== #
-    
-    def get(self,request):
-        get_all_payment = self.moyasar.get_payment()
-        return Response(get_all_payment)
-    
-    def post(self,request):
-        try:
-            data = request.data
-            ammount = data.get("amount")
-            metadata = data.get("metadata")
-            source = data.get("source")
-            description = data.get("description")
-            if  int(ammount) <=0:
-                return Response("Price can't be zero" ,status=400)
 
-            payment = self.moyasar.payment(amount=ammount , metadata=metadata ,source=source ,  description=description)
-            return Response({"status":payment.get("status"),"transaction_url":payment},status=200)
-        except Exception as e:
-            return Response({"error":str(e)} , status=400)
-        
+
+
+
+    
+    
