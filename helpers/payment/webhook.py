@@ -15,15 +15,13 @@ class WebHookApiView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            data = request.data  
-            print("Data" , data)
-            print("Payment ID:", data.get("id"))
-            print("Metadata:", data.get("data").get("metadata"))
+            webhook_response_data = request.data  
+            data = webhook_response_data.get("data") 
 
             payment_id = data.get("id")
-            status = data.get("data").get("status")
-            amount = data.get("data").get("amount")
-            metadata = data.get("data").get("metadata")
+            status = data.get("status")
+            amount = data.get("amount")
+            metadata = data.get("metadata")
 
             subscription_id = metadata.get("subscription_id")
             subscription_type = metadata.get("type","")

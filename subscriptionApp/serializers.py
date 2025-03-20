@@ -1,9 +1,7 @@
-
-
 from rest_framework import serializers
 from .models import CompanySubscriptionDetailsModel, CompanySubscriptionPlansModel
 from .models import Payment
-
+from django.utils import timezone
 
 class CompanySubscriptionDetailsModelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -39,10 +37,9 @@ class PaymentSerializer(serializers.ModelSerializer):
         try:
             subscription_plan = CompanySubscriptionPlansModel.objects.get(pk=subscription_id)
         except CompanySubscriptionPlansModel.DoesNotExist:
-            raise serializers.ValidationError("Subscription plan not found")
-        
+            raise serializers.ValidationError("Subscription plan not found") 
         # Check if the company has a subscription
-        company_subscription = CompanySubscriptionDetailsModel.objects.filter(company=company).first()
+        company_subscription = CompanySubscriptionDetailsModel.objects.filter(company=company , end_date__gte=timezone.now() ).first()
         
         if company_subscription:
                 required_amount = company_subscription.have_to_pay(new_plan_price=subscription_plan.price)

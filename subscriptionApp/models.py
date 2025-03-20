@@ -5,7 +5,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from companyApp.models import CompanyDetailsModel
 from django.utils.timezone import now
-from datetime import timedelta
+
 from django.utils import timezone
 
 # ignoreing
@@ -81,7 +81,7 @@ class Payment(models.Model):
 class CompanySubscriptionDetailsModel(models.Model):
     plan = models.ForeignKey(CompanySubscriptionPlansModel, on_delete=models.CASCADE, related_name='subscription_plan')
     company = models.OneToOneField(CompanyDetailsModel, on_delete=models.CASCADE, related_name='company')
-    payemt =  models.ForeignKey(Payment, on_delete=models.CASCADE, related_name='payment' , null=True, blank=True)
+    payment =  models.ForeignKey(Payment, on_delete=models.CASCADE, related_name='payment' , null=True, blank=True)
     start_date = models.DateTimeField(default=now)
     end_date = models.DateTimeField()
     is_active = models.BooleanField(default=True)
