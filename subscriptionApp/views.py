@@ -29,7 +29,8 @@ class CompanySubscriptionDetailsViewSet(CustomBaseModelViewSet):
     serializer_class = CompanySubscriptionDetailsModelSerializer
 
     def create(self, request, *args, **kwargs):
-        company = request.data.get('company')
+   
+    
         plan_id = request.data.get('plan')
 
         try:
@@ -62,15 +63,18 @@ class PaymentCreateApiView(CreateAPIView):
         return context
 
 # ======= For Development Purposes Only =======#
-# class DemoPaymentApiView(APIView):
-#     permission_classes = [permissions.AllowAny]
-#     moyasar = Moyasar(config("MOYASAR_PUBLIC"), config(
-#         "MOYASAR_SECRET"), config("MOYASAR_CALLBACK_URL"))
-
-#     def get(self, request):
-#         payment = self.moyasar.payment(amount=100, currency="SAR", description="Test Payment", metadata={"subscription_id": 1, "type": "payment", 'user': 1, "payed_for": "secvice"}, source={
-#                                        "name": "demo", "number": "4111111111111111", "cvc": "123", "month": 12, "year": 2029})
-#         return Response(payment, status=status.HTTP_200_OK)
+class DemoPaymentApiView(APIView):
+    
+    permission_classes = [permissions.AllowAny]
+    moyasar = Moyasar(config("MOYASAR_PUBLIC"), config(
+        "MOYASAR_SECRET"), "https://pwr6fhq5-8000.asse.devtunnels.ms/subscriptions/payment/process/")
+    def get(self, request):
+        payment = self.moyasar.payment(amount=1000, 
+                                       currency="SAR", 
+                                       description="Test Payment", 
+                                       metadata={"subscription_id": 2, "type": "upgrade", 'user_id': 1, "payed_for": "s"}, source={
+                                       "name": "demo", "number": "4111111111111111", "cvc": "123", "month": 12, "year": 2029})
+        return Response(payment, status=status.HTTP_200_OK)
 
 # ========= payment Status APi view =========#
 class PaymentProcessingAPIView(APIView):
@@ -83,7 +87,7 @@ class PaymentProcessingAPIView(APIView):
 
     # Getting user payment details
     def  get(self, request):
-        payment_id = request.query_params.get("payment_id")
+        payment_id = request.query_params.get("id",)
         if not payment_id:
             return Response({"message": "Payment ID is required"}, status=status.HTTP_400_BAD_REQUEST)
         payment_status = self.moyasar.get_payment_by_id(payment_id)
@@ -129,7 +133,10 @@ class PaymentProcessingAPIView(APIView):
 
             if created:
                 subscribed_details.save()
-
+            else:
+                subscribed_details.payment = payment_query
+                subscribed_details.plan = subscription_plan
+                subscribed_details.save() 
             return Response({"message": "Payment is successful", "status": payment_status}, status=status.HTTP_200_OK)
 
         return Response({"message": "Payment is not successful", "status": payment_status}, status=status.HTTP_400_BAD_REQUEST)

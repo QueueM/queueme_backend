@@ -5,9 +5,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from usersapp.models import User
 from companyApp.models import CompanyDetailsModel
-from subscriptionApp.models import CompanySubscriptionPlansModel, CompanySubscriptionDetailsModel
-import json
-
+from subscriptionApp.models import CompanySubscriptionPlansModel, CompanySubscriptionDetailsModel, Payment
 
 @method_decorator(csrf_exempt, name='dispatch')
 class WebHookApiView(APIView):
@@ -15,55 +13,44 @@ class WebHookApiView(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            webhook_response_data = request.data  
-            data = webhook_response_data.get("data") 
-
+            data = request.data.get("data", {})
+            metadata = data.get("metadata", {})
             payment_id = data.get("id")
             status = data.get("status")
             amount = data.get("amount")
-            metadata = data.get("metadata")
-
             subscription_id = metadata.get("subscription_id")
-            subscription_type = metadata.get("type","")
+            subscription_type = metadata.get("type", "")
             user_id = metadata.get("user_id")
+            payed_for = metadata.get("payed_for")
 
-         
-
-            if not all([subscription_id, subscription_type, user_id, payment_id]):
+            if not all([subscription_id, subscription_type, user_id, payment_id, payed_for]):
                 return Response({"error": "Missing required fields"}, status=400)
 
             user = User.objects.get(pk=user_id)
-            company = CompanyDetailsModel.objects.get(user=user)
+            company = user.company
             subscription_plan = CompanySubscriptionPlansModel.objects.get(pk=subscription_id)
-
-            if status == "paid":
-                if subscription_type == "upgrade":
-                    company_subscription = CompanySubscriptionDetailsModel.objects.get(company=company)
-                    if amount == company_subscription.have_to_pay(new_plan_price=subscription_plan.price):
-                        company_subscription.plan = subscription_plan
+            payment = Payment.objects.get(payment_id=payment_id)
+            payment.status = status         
+            payment.save()
+            if status == "paid":        
+                company_subscription, _ = CompanySubscriptionDetailsModel.objects.get_or_create(company=company)
+                if subscription_type == "upgrade" and amount == company_subscription.have_to_pay(new_plan_price=subscription_plan.price):
+                    company_subscription.plan= subscription_plan
+                    company_subscription.payment = payment
+                    company_subscription.save()
+                    return Response({"status": status, "message": "Plan upgraded successfully"}, status=200)
+                
+                if subscription_type == "payment":
+                    company_subscription ,  created = CompanySubscriptionDetailsModel.objects.get_or_create(plan=subscription_plan, company=company)
+                    if created:
+                        company_subscription.payment = payment
                         company_subscription.save()
-                        return Response({"status": status, "message": "Plan upgraded successfully"}, status=200)
-
-                elif subscription_type == "payment":
-                    CompanySubscriptionDetailsModel.objects.create(
-                        plan=subscription_plan,
-                        company=company,
-                    )
+                    
                     return Response({"status": status, "message": "Purchase successful"}, status=200)
-
             return Response({"status": status, "message": "Unhandled payment status"}, status=400)
 
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=404)
-        except CompanyDetailsModel.DoesNotExist:
-            return Response({"error": "Company not found"}, status=404)
-        except CompanySubscriptionPlansModel.DoesNotExist:
-            return Response({"error": "Subscription plan not found"}, status=404)
-        except CompanySubscriptionDetailsModel.DoesNotExist:
-            return Response({"error": "Company subscription details not found"}, status=404)
-        except json.JSONDecodeError:
-            return Response({"error": "Invalid JSON payload"}, status=400)
+        except (User.DoesNotExist, CompanyDetailsModel.DoesNotExist, CompanySubscriptionPlansModel.DoesNotExist, 
+                CompanySubscriptionDetailsModel.DoesNotExist, Payment.DoesNotExist) as e:
+            return Response({"error": str(e)}, status=404)
         except Exception as e:
-            print(str(e))
             return Response({"error": "Internal Server Error", "details": str(e)}, status=500)
-

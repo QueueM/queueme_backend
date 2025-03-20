@@ -64,7 +64,7 @@ class Payment(models.Model):
     class Payment_type_choices(models.TextChoices):
         Payment = 'p', "Payment"
         Upgrade  = "u", "Upgrade"
-    payemnt_id = models.CharField(max_length=255)
+    payment_id = models.CharField(max_length=255)
     amount = models.DecimalField(decimal_places=2, max_digits=10)   
     status = models.CharField(max_length=255)
     payment_type = models.CharField(max_length=1, choices=Payment_type_choices.choices)
@@ -72,7 +72,7 @@ class Payment(models.Model):
     creatd_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"{self.payed_for} - {self.amount} - {self.status}"
+        return self.payment_id
     
     
     
@@ -90,7 +90,7 @@ class CompanySubscriptionDetailsModel(models.Model):
         if not  self.pk:
             self.start_date = timezone.now()
             self.end_date = self.start_date + timezone.timedelta(days=self.plan.duration_days)
-            return super().save(*args, **kwargs)
+        return super().save(*args, **kwargs)
         
         
     def _calculate_useused_days_price(self):
@@ -102,6 +102,8 @@ class CompanySubscriptionDetailsModel(models.Model):
 
     
     def have_to_pay(self ,new_plan_price):
+        if new_plan_price< self.plan.price:
+            return self.plan.price - new_plan_price
         return new_plan_price - self.plan.price
         
     def __str__(self):

@@ -37,7 +37,7 @@ class Moyasar:
     def __init__(self, api_key: str, secret_key: str, callback_url: str) -> None:
         self.api_key = api_key
         self.secret_key = secret_key
-        self.callback_url = "https://pwr6fhq5-8000.asse.devtunnels.ms/payment/callback"
+        self.callback_url = callback_url
         self._currency = "SAR"
         self._url = "https://api.moyasar.com/v1"
         self._payment_method = "creditcard"
