@@ -62,21 +62,21 @@ class PaymentCreateApiView(CreateAPIView):
         context["request"] = self.request
         return context
 
-# ======= For Development Purposes Only =======#
-class DemoPaymentApiView(APIView):
+# # ======= For Development Purposes Only =======#
+# class DemoPaymentApiView(APIView):
     
-    permission_classes = [permissions.AllowAny]
-    moyasar = Moyasar(config("MOYASAR_PUBLIC"), config(
-        "MOYASAR_SECRET"), "https://pwr6fhq5-8000.asse.devtunnels.ms/subscriptions/payment/process/")
-    def get(self, request):
-        payment = self.moyasar.payment(amount=9000, 
-                                       currency="SAR", 
-                                       description="Test Payment", 
-                                       metadata={"subscription_id": 2, "type": "payment", 'user_id': 1, "payed_for": "s"}, source={
-                                       "name": "demo", "number": "4111111111111111", "cvc": "123", "month": 12, "year": 2029})
-        return Response(payment, status=status.HTTP_200_OK)
+#     permission_classes = [permissions.AllowAny]
+#     moyasar = Moyasar(config("MOYASAR_PUBLIC"), config(
+#         "MOYASAR_SECRET"), "https://pwr6fhq5-8000.asse.devtunnels.ms/subscriptions/payment/process/")
+#     def get(self, request):
+#         payment = self.moyasar.payment(amount=9000, 
+#                                        currency="SAR", 
+#                                        description="Test Payment", 
+#                                        metadata={"subscription_id": 2, "type": "payment", 'user_id': 1, "payed_for": "s"}, source={
+#                                        "name": "demo", "number": "4111111111111111", "cvc": "123", "month": 12, "year": 2029})
+#         return Response(payment, status=status.HTTP_200_OK)
 
-# ========= payment Status APi view =========#
+# # ========= payment Status APi view =========#
 class PaymentProcessingAPIView(APIView):
     permission_classes = [permissions.AllowAny]
     moyasar = Moyasar(
