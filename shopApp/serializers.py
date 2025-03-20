@@ -42,6 +42,10 @@ class ShopDetailsModelSerializer(serializers.ModelSerializer):
         return data
     
     def create(self, validated_data):
+        
+        if ShopDetailsModel.objects.filter(shop_name=validated_data['username']).exists():
+            raise ValidationError('Shop name must be unique.')
+        
         categories_data = validated_data.pop('categories', [])
         opening_hours_data = validated_data.pop('opening_hours', [])
 
