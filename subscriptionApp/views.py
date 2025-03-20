@@ -69,10 +69,10 @@ class DemoPaymentApiView(APIView):
     moyasar = Moyasar(config("MOYASAR_PUBLIC"), config(
         "MOYASAR_SECRET"), "https://pwr6fhq5-8000.asse.devtunnels.ms/subscriptions/payment/process/")
     def get(self, request):
-        payment = self.moyasar.payment(amount=1000, 
+        payment = self.moyasar.payment(amount=9000, 
                                        currency="SAR", 
                                        description="Test Payment", 
-                                       metadata={"subscription_id": 2, "type": "upgrade", 'user_id': 1, "payed_for": "s"}, source={
+                                       metadata={"subscription_id": 2, "type": "payment", 'user_id': 1, "payed_for": "s"}, source={
                                        "name": "demo", "number": "4111111111111111", "cvc": "123", "month": 12, "year": 2029})
         return Response(payment, status=status.HTTP_200_OK)
 
@@ -85,17 +85,7 @@ class PaymentProcessingAPIView(APIView):
         config("MOYASAR_CALLBACK_URL")
     )
 
-    # Getting user payment details
-    def  get(self, request):
-        payment_id = request.query_params.get("id",)
-        if not payment_id:
-            return Response({"message": "Payment ID is required"}, status=status.HTTP_400_BAD_REQUEST)
-        payment_status = self.moyasar.get_payment_by_id(payment_id)
-        if not payment_status:
-            return Response({"message": "Invalid payment ID or payment not found"}, status=status.HTTP_400_BAD_REQUEST)
-        return Response({"message": f"{payment_id} payment details", "status": payment_status}, status=status.HTTP_200_OK)
-    
-    # Post payment details  
+ 
     def post(self, request):
         payment_id = request.data.get("payment_id")
         if not payment_id:
@@ -114,7 +104,7 @@ class PaymentProcessingAPIView(APIView):
         if payment_status.get("status") == "paid":
             payment_metadata = payment_status.get("metadata", {})
             subscription_id = payment_metadata.get("subscription_id")
-            user_id = payment_metadata.get("user")
+            user_id = payment_metadata.get("user_id")
 
             if not subscription_id or not user_id:
                 return Response({"message": "Missing subscription or user details"}, status=status.HTTP_400_BAD_REQUEST)
@@ -128,10 +118,13 @@ class PaymentProcessingAPIView(APIView):
 
             # Create or get subscription details
             subscribed_details, created = CompanySubscriptionDetailsModel.objects.get_or_create(
-                company=company, payment=payment_query, plan=subscription_plan
+                company=company
             )
 
             if created:
+                subscribed_details.payment = payment_query  
+                subscribed_details.plan = subscription_plan
+                
                 subscribed_details.save()
             else:
                 subscribed_details.payment = payment_query

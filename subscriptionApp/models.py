@@ -102,8 +102,8 @@ class CompanySubscriptionDetailsModel(models.Model):
 
     
     def have_to_pay(self ,new_plan_price):
-        if new_plan_price< self.plan.price:
-            return self.plan.price - new_plan_price
+        if new_plan_price < self.plan.price:
+            return 0
         return new_plan_price - self.plan.price
         
     def __str__(self):

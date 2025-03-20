@@ -43,7 +43,7 @@ class PaymentSerializer(serializers.ModelSerializer):
         
         if company_subscription:
                 required_amount = company_subscription.have_to_pay(new_plan_price=subscription_plan.price)
-                if amount < required_amount:
+                if amount != required_amount:
                     raise serializers.ValidationError(
                         f"Amount should be at least {required_amount}"
                     )
