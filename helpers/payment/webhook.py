@@ -81,6 +81,7 @@ class WebHookApiView(APIView):
 
         except (User.DoesNotExist, CompanyDetailsModel.DoesNotExist, CompanySubscriptionPlansModel.DoesNotExist,
                 CompanySubscriptionDetailsModel.DoesNotExist, Payment.DoesNotExist) as e:
+            
             return Response({"error": str(e)}, status=404)
         except Exception as e:
             return Response({"error": "Internal Server Error", "details": str(e)}, status=500)
