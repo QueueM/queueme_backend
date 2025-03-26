@@ -4,20 +4,21 @@ from .models import EmployeeDetailsModel, EmployeeWorkingHoursModel
 
 from shopApp.models import ShopDetailsModel
 from .models import EmployeeRoleManangementModel
-class EmployeeWorkingHoursSerializer(serializers.ModelSerializer):
+from customClasses.CustomBaseModelSerializer import CustomBaseModelSerializer
+class EmployeeWorkingHoursSerializer(CustomBaseModelSerializer):
     
     class Meta:
         model = EmployeeWorkingHoursModel
         # fields = "__all__"
         exclude = ["employee"]
-class EmployeeRoleSerializer(serializers.ModelSerializer):
+class EmployeeRoleSerializer(CustomBaseModelSerializer):
     class Meta:
         model = EmployeeRoleManangementModel
         fields = "__all__" 
     
     
 
-class EmployeeDetailsSerializer(serializers.ModelSerializer):
+class EmployeeDetailsSerializer(CustomBaseModelSerializer):
     working_hours = EmployeeWorkingHoursSerializer(many=True)
     roles = serializers.SerializerMethodField()
     class Meta:

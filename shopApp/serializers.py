@@ -10,16 +10,17 @@ from shopServiceApp.serializers import ShopServiceCategoryModelSerializer
 from shopServiceApp.models import ShopServiceCategoryModel
 from employeeApp.models import EmployeeDetailsModel
 from .models import SpecialistTypesModel
-class ShopOpeningHoursModelSerializer(serializers.ModelSerializer):
+from customClasses.CustomBaseModelSerializer import CustomBaseModelSerializer
+class ShopOpeningHoursModelSerializer(CustomBaseModelSerializer):
     class Meta:
         model = ShopOpeningHoursModel
         # fields = "__all__"
         exclude = ["shop"]
-class SpecialstTypesSerializer(serializers.ModelSerializer):
+class SpecialstTypesSerializer(CustomBaseModelSerializer):
     class Meta:
         model = SpecialistTypesModel
         fields ="__all__"
-class ShopDetailsModelSerializer(serializers.ModelSerializer):
+class ShopDetailsModelSerializer(CustomBaseModelSerializer):
     categories = serializers.PrimaryKeyRelatedField(
         queryset=ShopServiceCategoryModel.objects.all(),many=True
         )
@@ -83,17 +84,17 @@ class ShopDetailsModelSerializer(serializers.ModelSerializer):
         return instance
     
 
-class ShopPermissionsModelSerializer(serializers.ModelSerializer):
+class ShopPermissionsModelSerializer(CustomBaseModelSerializer):
     class Meta:
         model = ShopDetailsModel
         fields = "__all__"
     
-class ShopGalleryImagesModelSerializer(serializers.ModelSerializer):
+class ShopGalleryImagesModelSerializer(CustomBaseModelSerializer):
     class Meta:
         model = ShopGalleryImagesModel
         fields = "__all__"
 
-class ShopSpecialistDetailsModelSerializer(serializers.ModelSerializer):
+class ShopSpecialistDetailsModelSerializer(CustomBaseModelSerializer):
     class Meta:
         model = ShopSpecialistDetailsModel
         fields = "__all__"

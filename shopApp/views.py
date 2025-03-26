@@ -19,11 +19,14 @@ class ShopDetailsViewSet(CustomBaseModelViewSet):
         context['user'] = self.request.user  # Pass the user into the context
         return context
     
-    def get_queryset(self):
-        """
-        This view should return the company details associated with the current user.
-        """
-        return ShopDetailsModel.objects.filter(company=self.request.user.company)
+    # def get_queryset(self):
+    #     """
+    #     This view should return the company details associated with the current user.
+    #     """
+    #     if hasattr(self.request.user, 'company'):
+    #         return ShopDetailsModel.objects.filter(company=self.request.user.company)
+    #     if hasattr(self.request.user, 'employee'):
+    #     return ShopDetailsModel.objects.filter
 
 
 class ShopPermissionsViewSet(viewsets.ModelViewSet):

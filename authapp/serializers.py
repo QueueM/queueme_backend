@@ -6,13 +6,13 @@ from rest_framework import serializers
 from .models import SendOTPModel
 from django.contrib.auth.models import User
 from rest_framework.exceptions import ValidationError
-
-class SendOTPModelSerializer(serializers.ModelSerializer):
+from customClasses.CustomBaseModelSerializer import CustomBaseModelSerializer
+class SendOTPModelSerializer(CustomBaseModelSerializer):
     class Meta:
         model = SendOTPModel
         fields = "__all__"
     
-class RegisterSerializer(serializers.ModelSerializer):
+class RegisterSerializer(CustomBaseModelSerializer):
     password = serializers.CharField(write_only=True, min_length=6)
     phone_no = serializers.CharField(write_only=True, min_length=10) 
     otp = serializers.CharField(write_only=True, min_length=4) 

@@ -133,4 +133,4 @@ class ServiceBookingDiscountCouponsModel(models.Model):
 
 class ShopServiceGalleryModel(models.Model):
     service = models.ForeignKey("shopServiceApp.ShopServiceDetailsModel", on_delete=models.CASCADE)
-    file = models.FileField(upload_to='shop/service/gallery', null=True, blank=True)
+    file = models.FileField(upload_to='shop/service/gallery', null=False, blank=False)

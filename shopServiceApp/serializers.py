@@ -3,14 +3,14 @@
 from rest_framework import serializers
 from .models import ShopServiceDetailsModel, ShopServiceCategoryModel, ServiceBookingDetailsModel, ServiceBookingDiscountCouponsModel, ShopServiceTimeSlotModel
 from .models import ShopServiceGalleryModel
-
-class ShopServiceTimeSlotSerializer(serializers.ModelSerializer):
+from customClasses.CustomBaseModelSerializer import CustomBaseModelSerializer
+class ShopServiceTimeSlotSerializer(CustomBaseModelSerializer):
     class Meta:
         model = ShopServiceTimeSlotModel
         # fields = '__all__'
         exclude = ["service"]
 
-class ShopServiceDetailsModelSerializer(serializers.ModelSerializer):
+class ShopServiceDetailsModelSerializer(CustomBaseModelSerializer):
     time_slots = ShopServiceTimeSlotSerializer(source='available_time_slots', many=True, read_only=True)
     bookings_count = serializers.SerializerMethodField()
     class Meta:
@@ -57,12 +57,12 @@ class ShopServiceDetailsModelSerializer(serializers.ModelSerializer):
         
         return instance
 
-class ShopServiceCategoryModelSerializer(serializers.ModelSerializer):
+class ShopServiceCategoryModelSerializer(CustomBaseModelSerializer):
     class Meta:
         model = ShopServiceCategoryModel
         fields = "__all__"
 
-class ServiceBookingDetailsModelSerializer(serializers.ModelSerializer):
+class ServiceBookingDetailsModelSerializer(CustomBaseModelSerializer):
     class Meta:
         model = ServiceBookingDetailsModel
         fields = "__all__"
@@ -72,12 +72,12 @@ class ServiceBookingDetailsModelSerializer(serializers.ModelSerializer):
         data['user'] = self.context['user']
         return data
 
-class ServiceBookingDiscountCouponsModelSerializer(serializers.ModelSerializer):
+class ServiceBookingDiscountCouponsModelSerializer(CustomBaseModelSerializer):
     class Meta:
         model = ServiceBookingDiscountCouponsModel
         fields = "__all__"
 
-class ShopServiceGalleryModelSerializer(serializers.ModelSerializer):
+class ShopServiceGalleryModelSerializer(CustomBaseModelSerializer):
     class Meta:
         model = ShopServiceGalleryModel
         fields = "__all__"

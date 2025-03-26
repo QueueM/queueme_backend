@@ -2,13 +2,13 @@
 
 from rest_framework import serializers
 from .models import ShopAdsModel, ShopAdsImpressionModel
-
-class ShopAdsSerializer(serializers.ModelSerializer):
+from customClasses.CustomBaseModelSerializer import CustomBaseModelSerializer
+class ShopAdsSerializer(CustomBaseModelSerializer):
     class Meta:
         model = ShopAdsModel
         fields = "__all__"
 
-class ShopAdsImpressionSerializer(serializers.ModelSerializer):
+class ShopAdsImpressionSerializer(CustomBaseModelSerializer):
     class Meta:
         model = ShopAdsImpressionModel
         fields = "__all__"

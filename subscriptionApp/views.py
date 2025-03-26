@@ -23,6 +23,14 @@ class CompanySubscriptionPlanViewSet(CustomBaseModelViewSet):
     queryset = CompanySubscriptionPlansModel.objects.all()
     serializer_class = CompanySubscriptionPlansModelsSerializer
 
+class CompanySubscriptionPlanDetailsAPIView(APIView):
+
+    def get(self, request):
+        obj = CompanySubscriptionDetailsModel.objects.filter(company=request.user.company)
+        if obj.exists() == False :
+            return Response({"message":"No Subscription plan exist"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = CompanySubscriptionDetailsModelSerializer(obj.first)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class CompanySubscriptionDetailsViewSet(CustomBaseModelViewSet):
     queryset = CompanySubscriptionDetailsModel.objects.all()

@@ -54,13 +54,13 @@ def Service_created_updated_notification(sender, instance, created, **kwargs):
 def service_gallery_created_updated_notification(sender, instance, created, **kwargs):
     if created:
         NotificationModel.objects.create(
-            user=instance.shop.company.user,  # Assuming Shop model has an owner field
+            user=instance.service.shop.company.user,  # Assuming Shop model has an owner field
             title="Added to Serivce Gallery",
             message=f"Added to gallery of service {instance.service.name}"
         )
     else :
         NotificationModel.objects.create(
-            user=instance.shop.company.user,  # Assuming Shop model has an owner field
+            user=instance.service.shop.company.user,  # Assuming Shop model has an owner field
             title="Updated to Serivce Gallery",
             message=f"Updated to gallery of service {instance.service.name}"
         )

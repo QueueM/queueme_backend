@@ -4,8 +4,8 @@ from rest_framework import serializers
 
 from rest_framework.exceptions import ValidationError
 from .models import CompanyDetailsModel
-
-class CompanyDetailsModelSerializer(serializers.ModelSerializer):
+from customClasses.CustomBaseModelSerializer import CustomBaseModelSerializer
+class CompanyDetailsModelSerializer(CustomBaseModelSerializer):
     class Meta:
         model = CompanyDetailsModel
         fields = "__all__"

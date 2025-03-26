@@ -2,20 +2,20 @@ from rest_framework import serializers
 from .models import CompanySubscriptionDetailsModel, CompanySubscriptionPlansModel
 from .models import Payment
 from django.utils import timezone
-
-class CompanySubscriptionDetailsModelSerializer(serializers.ModelSerializer):
+from customClasses.CustomBaseModelSerializer import CustomBaseModelSerializer
+class CompanySubscriptionDetailsModelSerializer(CustomBaseModelSerializer):
     class Meta:
         model = CompanySubscriptionDetailsModel
         fields = "__all__"
 
 
-class CompanySubscriptionPlansModelsSerializer(serializers.ModelSerializer):
+class CompanySubscriptionPlansModelsSerializer(CustomBaseModelSerializer):
     class Meta:
         model = CompanySubscriptionPlansModel
         fields = "__all__"
 
 
-class PaymentSerializer(serializers.ModelSerializer):
+class PaymentSerializer(CustomBaseModelSerializer):
     subscription_id = serializers.CharField(read_only=True)
 
     class Meta:

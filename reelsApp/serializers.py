@@ -6,8 +6,8 @@ from usersapp.serializers import UserSerializer
 from customersApp.models import CustomersDetailsModel
 from customersApp.serializers import CustomersDetailsModelSerializer
 from .models import StoryModel
-
-class ReelSerializer(serializers.ModelSerializer):
+from customClasses.CustomBaseModelSerializer import CustomBaseModelSerializer
+class ReelSerializer(CustomBaseModelSerializer):
     # user = serializers.ReadOnlyField(source='user.username')
     customer = serializers.SerializerMethodField()
     like_count = serializers.SerializerMethodField()
@@ -27,7 +27,7 @@ class ReelSerializer(serializers.ModelSerializer):
         except CustomersDetailsModel.DoesNotExist:
             return None  # Handle case where customer details do not exist
 
-class CommentSerializer(serializers.ModelSerializer):
+class CommentSerializer(CustomBaseModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
     like_count = serializers.SerializerMethodField()
     liked_by = UserSerializer(many=True, read_only=True, source='likes')
@@ -46,7 +46,7 @@ class CommentSerializer(serializers.ModelSerializer):
             # return obj.replies.all()
         return []
 
-class StorySerilaizer(serializers.ModelSerializer):
+class StorySerilaizer(CustomBaseModelSerializer):
     class Meta:
         model = StoryModel
         fields = "__all__"

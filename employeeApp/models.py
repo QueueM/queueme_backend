@@ -61,17 +61,73 @@ class EmployeeDetailsModel(models.Model):
 class EmployeeRoleManangementModel(models.Model):
     name = models.CharField(max_length=300)
     shop = models.ForeignKey(ShopDetailsModel, on_delete=models.CASCADE, related_name="role")
-    # employee = models.ForeignKey(EmployeeDetailsModel, on_delete=models.CASCADE, related_name="role", null=True, blank=True)
     employees = models.ManyToManyField(EmployeeDetailsModel, related_name="roles")
-    can_edit_shop = models.BooleanField(default=False)
-    can_add_services = models.BooleanField(default=False)
-    can_edit_services = models.BooleanField(default=False)
-    can_add_employee = models.BooleanField(default=False)
-    can_edit_employee = models.BooleanField(default=False)
-    can_delete_employee = models.BooleanField(default=False)
-    can_add_specialist = models.BooleanField(default=False)
-    can_edit_specialist = models.BooleanField(default=False)
-    can_delete_specialist = models.BooleanField(default=False)
+
+    # Shop Permissions
+    can_view_shops = models.BooleanField(default=True)
+    can_add_shops = models.BooleanField(default=True)
+    can_edit_shops = models.BooleanField(default=True)
+    can_delete_shops = models.BooleanField(default=False)
+
+    # Customer Permissions
+    can_view_customers = models.BooleanField(default=True)
+    can_add_customers = models.BooleanField(default=True)
+    can_edit_customers = models.BooleanField(default=True)
+
+    # Service Permissions
+    can_view_services = models.BooleanField(default=True)
+    can_add_services = models.BooleanField(default=True)
+    can_edit_services = models.BooleanField(default=True)
+    can_delete_services = models.BooleanField(default=False)
+
+    # Booking Permissions
+    can_view_bookings = models.BooleanField(default=True)
+    can_add_bookings = models.BooleanField(default=True)
+    can_edit_bookings = models.BooleanField(default=True)
+    can_delete_bookings = models.BooleanField(default=False)
+
+    # Employee Permissions
+    can_view_employees = models.BooleanField(default=True)
+    can_add_employees = models.BooleanField(default=True)
+    can_edit_employees = models.BooleanField(default=True)
+    can_delete_employees = models.BooleanField(default=False)
+
+    # Role Permissions
+    can_view_roles = models.BooleanField(default=True)
+    can_add_roles = models.BooleanField(default=True)
+    can_edit_roles = models.BooleanField(default=True)
+    can_delete_roles = models.BooleanField(default=False)
+
+    # Specialist Permissions
+    can_view_specialists = models.BooleanField(default=True)
+    can_add_specialists = models.BooleanField(default=True)
+    can_edit_specialists = models.BooleanField(default=True)
+    can_delete_specialists = models.BooleanField(default=False)
+
+    # Reels Permissions
+    can_view_reels = models.BooleanField(default=True)
+    can_add_reels = models.BooleanField(default=True)
+    can_edit_reels = models.BooleanField(default=True)
+    can_delete_reels = models.BooleanField(default=False)
+
+    # Stories Permissions
+    can_view_stories = models.BooleanField(default=True)
+    can_add_stories = models.BooleanField(default=True)
+    can_edit_stories = models.BooleanField(default=True)
+    can_delete_stories = models.BooleanField(default=False)
+
+    # Marketing Ads Permissions
+    can_view_marketing_ads = models.BooleanField(default=True)
+    can_add_marketing_ads = models.BooleanField(default=True)
+    can_edit_marketing_ads = models.BooleanField(default=True)
+    can_delete_marketing_ads = models.BooleanField(default=False)
+
+    # Chat Permissions
+    can_view_chat = models.BooleanField(default=True)
+    can_add_chat = models.BooleanField(default=True)
+    can_edit_chat = models.BooleanField(default=True)
+    can_delete_chat = models.BooleanField(default=False)
+
 
     # class Meta:
     #     unique_together = ('shop', 'employee')
