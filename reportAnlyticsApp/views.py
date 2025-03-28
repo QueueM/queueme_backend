@@ -47,7 +47,7 @@ from  shopApp.models import ShopDetailsModel
 #             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class ShopReportApiViewSet(APIView):
+class ShopReportApiView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         fields_param = request.query_params.get('fields')

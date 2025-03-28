@@ -1,6 +1,6 @@
 from  rest_framework.routers import DefaultRouter 
 from django.urls import path, include
-from .views import(ShopReportApiViewSet)
+from .views import(ShopReportApiView)
 
 # Initialize the router
 router = DefaultRouter()
@@ -12,5 +12,5 @@ router = DefaultRouter()
 
 urlpatterns = [
     path("", include(router.urls)) ,
-    path("shop-report/", ShopReportApiViewSet.as_view(), name="shop_report")
+    path("shop-report/", ShopReportApiView.as_view(), name="shop_report")
 ]
