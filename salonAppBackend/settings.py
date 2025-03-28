@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    # for channels and async server
      "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,10 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
+    # rest framework    
     'rest_framework',
     "corsheaders",
-
+    # installed Apps 
     'usersapp',
     'authapp',
     'companyApp',
@@ -58,7 +59,8 @@ INSTALLED_APPS = [
     'notificationsapp',
     'adsApp',
     'chatApp',
-    
+    "reportAnlyticsApp",
+    # third party apps
     'storages', # s3 bucket
 ]
 
