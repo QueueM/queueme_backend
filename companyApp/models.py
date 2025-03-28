@@ -29,6 +29,8 @@ class CompanyDetailsModel(models.Model):
     company_registration_document = models.FileField(upload_to='company_registration_doc/', null=True, blank=True)
     tax_registration_number = models.CharField(max_length=30, default="")
     
+    def __str__(self):
+        return self.name
 
 
 # class CompanyEmployeeDetailsModel(models.Model):

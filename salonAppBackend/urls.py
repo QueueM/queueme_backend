@@ -31,5 +31,7 @@ urlpatterns = [
     path('subscriptions/', include('subscriptionApp.urls')),
     path('ads/', include('adsApp.urls')),
     path('chat/', include('chatApp.urls')),
+    path("report/", include("reportAnlyticsApp.urls")),
     path('payment/webhook/',WebHookApiView.as_view(),name="payment_callback")
+    
 ]
