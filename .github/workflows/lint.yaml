@@ -3,9 +3,9 @@ name: "Report  Linting"
 on: 
     workflow_dispatch:
     push:
-        branches: [feature/*]
+        branches: [feature/**]
     pull_request:
-        branches: [feature/*]
+        branches: [feature/**]
 
 jobs:
     linting:
