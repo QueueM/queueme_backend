@@ -9,6 +9,7 @@ from django.db.models import Q , F ,Sum,Count,Avg,Max,Min,Subquery,OuterRef,Case
 from customersApp.models import CustomersDetailsModel
 from companyApp.models import CompanyDetailsModel
 from  shopApp.models import ShopDetailsModel
+from  shopServiceApp.models import ShopServiceDetailsModel
 
 
 
@@ -46,17 +47,20 @@ from  shopApp.models import ShopDetailsModel
 #         except Exception as e:
 #             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-class ShopReportApiView(APIView):
-    permission_classes = [IsAuthenticated]
-    def get(self, request):
+def  get_fields(request):
         fields_param = request.query_params.get('fields')
         if fields_param:
             fields = [field.strip() for field in fields_param.split(",") if field.strip()]
             print("Requested report fields:", fields)
         else:
             fields = []
+        return fields
+
+class ShopReportApiView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
         
+        fields = get_fields(request)
         report = {}      
         try:
             if not fields or "total_shops" in fields:
@@ -79,3 +83,42 @@ class ShopReportApiView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
    
+   
+   
+class ServiceReportApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            fields = get_fields(request)
+            result = {}
+
+            if not fields or "total_service" in fields:
+                result["total_services"] = ShopServiceDetailsModel.objects.count()
+
+            if not fields or "available_services" in fields:
+                result["available_services"] = ShopServiceDetailsModel.objects.filter(is_availabe=True).count()
+
+            if not fields or "services_by_type" in fields:
+                result["services_by_type"] = (
+                    ShopServiceDetailsModel.objects.values("service_type")
+                    .annotate(count=Count("id"))
+                    .order_by("service_type")
+                )
+
+            if not fields or "price_statistics" in fields:
+                price_stats = ShopServiceDetailsModel.objects.aggregate(
+                    min_price=Min("price"),
+                    max_price=Max("price"),
+                    avg_price=Avg("price"),
+                )
+                result["price_statistics"] = {
+                    "min_price": price_stats["min_price"] or 0,
+                    "max_price": price_stats["max_price"] or 0,
+                    "avg_price": round(price_stats["avg_price"], 2) if price_stats["avg_price"] else 0,
+                }
+
+            return Response(result, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

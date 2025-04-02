@@ -48,6 +48,8 @@ class ShopServiceDetailsModel(models.Model):
     is_availabe = models.BooleanField(default=False)
     specialists = models.ManyToManyField("shopApp.ShopSpecialistDetailsModel", related_name="services_assigned", null=True, blank=True)
 
+
+
 class ServiceBookingDetailsModel(models.Model):
     class STATUS_CHOICES(models.TextChoices):
         REQUESTED = 'requested', 'Requested'
