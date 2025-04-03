@@ -4,10 +4,10 @@ from  rest_framework.response import Response
 from rest_framework.decorators import action
 from  rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Q , F ,Sum,Count,Avg,Max,Min,Subquery,OuterRef,Case,When
+from django.db.models import Q , F ,Sum,Count,Avg,Max,Min
 # All Models Will be here
-from customersApp.models import CustomersDetailsModel
-from companyApp.models import CompanyDetailsModel
+# from customersApp.models import CustomersDetailsModel
+# from companyApp.models import CompanyDetailsModel
 from  shopApp.models import ShopDetailsModel
 from  shopServiceApp.models import ShopServiceDetailsModel,ServiceBookingDetailsModel
 from employeeApp.models import EmployeeDetailsModel

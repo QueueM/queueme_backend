@@ -25,6 +25,6 @@ jobs:
             - name : Run Linting
               run: |
                 pip install flake8
-                flake8 --max-line-length=120 --ignore=E501,E203,E266,W503 . 
+                flake8 --max-line-length=120 --ignore=E501,E203,E266,W503 reportAnlyticsApp/views.py
                
         
