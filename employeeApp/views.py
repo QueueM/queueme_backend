@@ -31,16 +31,12 @@ class EmployeeRoleDetailsViewset(CustomBaseModelViewSet):
             shops = ShopDetailsModel.objects.filter(company=user.company)
             return EmployeeRoleManangementModel.objects.filter(shop__in=shops)
         elif hasattr(user, 'employee'):
-            # Step 1: Get all roles assigned to the employee
             assigned_roles = EmployeeRoleManangementModel.objects.filter(employee=user.employee)
-
-            # Step 2: Extract the list of unique shops from those roles
             assigned_shops = ShopDetailsModel.objects.filter(id__in=assigned_roles.values_list('shop_id', flat=True))
-
-            # Step 3: Get all roles in these shops
             return EmployeeRoleManangementModel.objects.filter(shop__in=assigned_shops)
-        
         return EmployeeRoleManangementModel.objects.none()
         
+
+
         
 
