@@ -14,6 +14,8 @@ from authapp.models import SendOTPModel
 from .models import UserProfileModel
 from .serializers import UserProfileModelSerializer, UserSerializer
 from helpers.PaginationClass import CustomPageNumberPagination
+from subscriptionApp.models import CompanySubscriptionDetailsModel
+from subscriptionApp.serializers import CompanySubscriptionDetailsModelSerializer
 class Helper:
     def checkForKeys(keyList, requestBody):
         for a in keyList:
@@ -135,9 +137,16 @@ class UserMasterDetailsAPIView(APIView):
         employee = EmployeeDetailsModel.objects.filter(user=user).first()
         employee_data = EmployeeDetailsSerializer(employee).data if employee else None
 
+        # Get subscription details if they exist
+        subscroiption_data = None
+        if company:
+            subscription = CompanySubscriptionDetailsModel.objects.filter(company=company).first()
+            subscroiption_data = CompanySubscriptionDetailsModelSerializer(subscription).data if subscription else None
+
         return Response({
             "user" : user_data,
             "customer_details": customer_data,
             "company_details": company_data,
-            "employee_details": employee_data
+            "employee_details": employee_data,
+            "subscription_details": subscroiption_data
         })

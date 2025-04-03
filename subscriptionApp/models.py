@@ -70,6 +70,13 @@ class Payment(models.Model):
     payment_type = models.CharField(max_length=1, choices=Payment_type_choices.choices)
     payed_for =  models.CharField(max_length=3, choices=payaed_for_choices.choices)
     creatd_at = models.DateTimeField(auto_now_add=True)
+
+    # additional fields
+    bill_name = models.CharField( max_length=256)
+    phone_number = models.CharField( max_length=50)
+    email = models.EmailField()
+    address = models.TextField()
+
     
     def __str__(self):
         return self.payment_id
