@@ -41,4 +41,4 @@ class StoryViewedModel(models.Model):
     viewd_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('story', 'user') # Ensure a user can't view a story multiple times
+        unique_together = ('story', 'user')
