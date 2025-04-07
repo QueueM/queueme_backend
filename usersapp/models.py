@@ -16,3 +16,4 @@ class UserProfileModel(models.Model):
     phone_number = models.CharField(max_length=20)
     user_type = models.CharField(max_length=20, default="user")
     user_image = models.ImageField(upload_to='images/userprofile')
+    
