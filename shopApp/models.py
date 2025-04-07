@@ -39,7 +39,7 @@ class ShopDetailsModel(models.Model):
         BOTH = 'both', "Both"
         
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    company = models.ForeignKey(CompanyDetailsModel, on_delete=models.CASCADE)
+    company = models.ForeignKey(CompanyDetailsModel, on_delete=models.CASCADE , related_name="shops")   
     name = models.CharField(max_length=300, unique=True)
     description = models.TextField(null=True, blank=True)
     note = models.CharField(max_length=300, null=True, blank=True)
@@ -49,7 +49,7 @@ class ShopDetailsModel(models.Model):
     longitude = models.FloatField(null=True, blank=True)
     cover_image = models.ImageField(upload_to='images/shop/cover', null=True)
     avatar_image = models.ImageField(upload_to='images/shopgallery/', null=True, blank=True)
-
+    
     #
     username = models.CharField(max_length=20, default="", blank=True, unique=True)
     shop_name = models.CharField(max_length=300, default="")
