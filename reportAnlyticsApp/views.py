@@ -164,20 +164,21 @@ class ServiceBookingReportApiView(APIView):
         try:
             fields = get_fields(request)
             result = {}
+            shop = get_shop(request)
 
             if not fields or "total_bookings" in fields:
-                result["total_bookings"] = ServiceBookingDetailsModel.objects.filter(user=request.user).count()
+                result["total_bookings"] = ServiceBookingDetailsModel.objects.filter(service__shop__in=shop).count()
 
             if "bookings_by_status" in fields:
                 result["bookings_by_status"] = list(
-                    ServiceBookingDetailsModel.objects.filter(user=request.user)
+                    ServiceBookingDetailsModel.objects.filter(service__shop__in=shop)
                     .values("status")
                     .annotate(count=Count("id"))
                     .order_by("status")
                 )
 
             if "revenue_statistics" in fields:
-                revenue_stats = ServiceBookingDetailsModel.objects.filter(user=request.user).aggregate(
+                revenue_stats = ServiceBookingDetailsModel.objects.filter(service__shop__in=shop).aggregate(
                     min_final_amount=Min("final_amount"),
                     max_final_amount=Max("final_amount"),
                     avg_final_amount=Avg("final_amount"),
