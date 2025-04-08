@@ -81,8 +81,8 @@ class ShopReportApiView(APIView):
 
 
             if "shop_locations" in fields:
-                result["city"] = list(
-                    qs.values("city")
+                result["shop_locations"] = list(
+                    qs.values("city","country")
                     .annotate(count=Count("id"))
                     .order_by("city")
                 )
