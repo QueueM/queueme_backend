@@ -80,9 +80,11 @@ class ShopReportApiView(APIView):
 
 
 
-            if not fields or "shop_locations" in fields:
-                result["shop_locations"] = list(
-                    qs.values("city", "address", "id", "name")
+            if "shop_locations" in fields:
+                result["city"] = list(
+                    qs.values("city")
+                    .annotate(count=Count("id"))
+                    .order_by("city")
                 )
 
             # if not fields or "created_dates" in fields:
@@ -108,6 +110,8 @@ class ShopReportApiView(APIView):
 
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 class ServiceReportApiView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -155,7 +159,7 @@ class ServiceReportApiView(APIView):
 
 class ServiceBookingReportApiView(APIView):
     permission_classes = [IsAuthenticated]
-
+    # filter based on shop
     def get(self, request, *args, **kwargs):
         try:
             fields = get_fields(request)
