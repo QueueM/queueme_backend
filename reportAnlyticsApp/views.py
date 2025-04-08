@@ -86,6 +86,13 @@ class ShopReportApiView(APIView):
                     .annotate(count=Count("id"))
                     .order_by("city")
                 )
+                
+            if "shop_locations_by_country" in fields:
+                result["shop_locations_by_country"] = list(
+                    qs.values("country")
+                    .annotate(count=Count("id"))
+                    .order_by("country")
+                )
 
             # if not fields or "created_dates" in fields:
             #     result["created_dates"] = list(
