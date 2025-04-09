@@ -16,3 +16,7 @@ staticfiles/
 
 # Allow example environment file
 !.env.example
+
+# Ignore virtual environment directory
+/env/
+
