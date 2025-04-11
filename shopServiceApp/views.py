@@ -1,27 +1,28 @@
-from rest_framework import viewsets
+# shopServiceApp/views.py
+from rest_framework import viewsets, filters
 from customClasses.CustomBaseModelViewSet import CustomBaseModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters
-
 from .models import (
     ShopServiceCategoryModel,
     ShopServiceDetailsModel,
+    ServiceExtendedDetailsModel,
     ServiceBookingDetailsModel,
     ServiceBookingDiscountCouponsModel,
-    ShopServiceGalleryModel
+    ShopServiceGalleryModel,
 )
 from .serializers import (
     ShopServiceCategoryModelSerializer,
     ShopServiceDetailsModelSerializer,
+    ServiceExtendedDetailsModelSerializer,
     ServiceBookingDetailsModelSerializer,
     ServiceBookingDiscountCouponsModelSerializer,
-    ShopServiceGalleryModelSerializer
+    ShopServiceGalleryModelSerializer,
 )
 from .filters import (
     ShopServiceCategoryFilter,
     ShopServiceDetailsFilter,
     ServiceBookingDetailsFilter,
-    ShopServiceGalleryFilter
+    ShopServiceGalleryFilter,
 )
 
 class ShopServiceCategoryViewSet(CustomBaseModelViewSet):
@@ -37,6 +38,10 @@ class ShopServiceDetailsViewSet(CustomBaseModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     ordering_fields = ['price', 'duration', 'created_at']
     filterset_class = ShopServiceDetailsFilter
+
+class ServiceExtendedDetailsViewSet(CustomBaseModelViewSet):
+    queryset = ServiceExtendedDetailsModel.objects.all()
+    serializer_class = ServiceExtendedDetailsModelSerializer
 
 class ServiceBookingDetailsViewSet(CustomBaseModelViewSet):
     queryset = ServiceBookingDetailsModel.objects.all()

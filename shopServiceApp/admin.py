@@ -1,15 +1,42 @@
+# shopServiceApp/admin.py
 from django.contrib import admin
 from .models import (
     ShopServiceCategoryModel,
     ShopServiceDetailsModel,
+    ServiceExtendedDetailsModel,
+    ServiceOverview,
+    ServiceFAQ,
+    ServiceProcessStep,
+    ServiceBenefit,
+    ServiceAftercareTip,
     ServiceBookingDetailsModel,
     ServiceBookingDiscountCouponsModel,
     ShopServiceGalleryModel,
-    ShopServiceTimeSlotModel
+    ShopServiceTimeSlotModel,
 )
 
 class ShopServiceTimeSlotInline(admin.TabularInline):
     model = ShopServiceTimeSlotModel
+    extra = 1
+
+class ServiceOverviewInline(admin.TabularInline):
+    model = ServiceOverview
+    extra = 1
+
+class ServiceFAQInline(admin.TabularInline):
+    model = ServiceFAQ
+    extra = 1
+
+class ServiceProcessStepInline(admin.TabularInline):
+    model = ServiceProcessStep
+    extra = 1
+
+class ServiceBenefitInline(admin.TabularInline):
+    model = ServiceBenefit
+    extra = 1
+
+class ServiceAftercareTipInline(admin.TabularInline):
+    model = ServiceAftercareTip
     extra = 1
 
 @admin.register(ShopServiceCategoryModel)
@@ -24,6 +51,18 @@ class ShopServiceDetailsAdmin(admin.ModelAdmin):
     list_display = ('name', 'shop', 'price', 'duration', 'created_at')
     readonly_fields = ('forecast_data',)
     ordering = ('-created_at',)
+
+@admin.register(ServiceExtendedDetailsModel)
+class ServiceExtendedDetailsAdmin(admin.ModelAdmin):
+    inlines = [
+        ServiceOverviewInline,
+        ServiceFAQInline,
+        ServiceProcessStepInline,
+        ServiceBenefitInline,
+        ServiceAftercareTipInline,
+    ]
+    list_display = ('id', 'service', 'updated_at')
+    search_fields = ('service__name',)
 
 @admin.register(ServiceBookingDetailsModel)
 class ServiceBookingDetailsAdmin(admin.ModelAdmin):

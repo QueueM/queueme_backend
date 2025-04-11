@@ -1,21 +1,38 @@
+"""
+subscriptionApp/serializers.py
+
+Serializers for subscription models.
+Includes validation logic for payments.
+"""
+
 from rest_framework import serializers
 from .models import CompanySubscriptionDetailsModel, CompanySubscriptionPlansModel, Payment
+from customClasses.CustomBaseModelSerializer import CustomBaseModelSerializer
 from django.utils import timezone
-from customClasses.CustomBaseModelSerializer import CustomBaseModelSerializer  # Required import
 
 class CompanySubscriptionDetailsModelSerializer(CustomBaseModelSerializer):
+    """
+    Serializer for CompanySubscriptionDetailsModel.
+    """
     class Meta:
         model = CompanySubscriptionDetailsModel
         fields = "__all__"
 
 
 class CompanySubscriptionPlansModelsSerializer(CustomBaseModelSerializer):
+    """
+    Serializer for CompanySubscriptionPlansModel.
+    """
     class Meta:
         model = CompanySubscriptionPlansModel
         fields = "__all__"
 
 
 class PaymentSerializer(CustomBaseModelSerializer):
+    """
+    Serializer for Payment model.
+    Adds a read-only subscription_id field.
+    """
     subscription_id = serializers.CharField(read_only=True)
 
     class Meta:
@@ -23,6 +40,9 @@ class PaymentSerializer(CustomBaseModelSerializer):
         fields = "__all__"
 
     def validate_amount(self, amount):
+        """
+        Validates that the amount is greater than 0 and matches the expected price for the plan.
+        """
         try:
             amount = float(amount)
         except (ValueError, TypeError):
@@ -45,7 +65,6 @@ class PaymentSerializer(CustomBaseModelSerializer):
         except CompanySubscriptionPlansModel.DoesNotExist:
             raise serializers.ValidationError("Subscription plan not found.")
 
-        # Determine correct price based on billing cycle
         if billing_cycle == "yearly":
             if not subscription_plan.yearly_price:
                 raise serializers.ValidationError("Yearly price is not set for this plan.")

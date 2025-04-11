@@ -1,3 +1,4 @@
+# companyApp/models.py
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -9,60 +10,69 @@ class CompanyDetailsModel(models.Model):
         ('rejected', 'Rejected'),
         ('created',  'Created'),
     ]
-
     class MERCHANT_TYPE(models.TextChoices):
         FREELANCE = 'freelance', 'Freelance'
         SHOP      = 'shop',      'Shop'
 
     user                  = models.OneToOneField(
-                                User,
-                                on_delete=models.CASCADE,
-                                related_name='company'
-                            )
-    name                  = models.CharField(max_length=300)
+                              User,
+                              on_delete=models.CASCADE,
+                              related_name='company'
+                          )
+    name                  = models.CharField(max_length=300, db_index=True)
     company_image         = models.ImageField(
-                                upload_to='images/companylogo',
-                                null=True, blank=True
-                            )
+                              upload_to='images/companylogo',
+                              null=True, blank=True
+                          )
     description           = models.TextField(null=True, blank=True)
     address               = models.TextField(null=True, blank=True)
     is_verified           = models.BooleanField(default=False)
     status                = models.CharField(
-                                max_length=30,
-                                choices=STATUS_CHOICES,
-                                default='created'
-                            )
+                              max_length=30,
+                              choices=STATUS_CHOICES,
+                              default='created'
+                          )
     shops_limit           = models.IntegerField(default=1)
     merchant_type         = models.CharField(
-                                max_length=20,
-                                choices=MERCHANT_TYPE.choices,
-                                default=MERCHANT_TYPE.FREELANCE
-                            )
+                              max_length=20,
+                              choices=MERCHANT_TYPE.choices,
+                              default=MERCHANT_TYPE.FREELANCE
+                          )
     name_arabic           = models.CharField(max_length=300, default='')
     registration_document = models.FileField(
-                                upload_to='company_registration_doc/',
-                                null=True, blank=True
-                            )
+                              upload_to='company_registration_doc/',
+                              null=True, blank=True
+                          )
     tax_number            = models.CharField(max_length=30, default='')
-
+    # New field: global flag for online payment across all shops in the company
+    online_payment_global_enabled = models.BooleanField(
+                              default=False,
+                              help_text="If enabled, all shops for this company will be eligible for online payments."
+                          )
     # AI integration fields
-    forecast_data = models.JSONField(
-        encoder=DjangoJSONEncoder,
-        default=dict,
-        null=True,
-        blank=True,
-        help_text='AI forecast metadata (will JSON‑encode datetimes/timestamps)'
-    )
-    fraud_flag    = models.BooleanField(
-                        default=False,
-                        help_text='Flag if potential fraud detected'
-                    )
+    forecast_data         = models.JSONField(
+                              encoder=DjangoJSONEncoder,
+                              default=dict,
+                              null=True,
+                              blank=True,
+                              help_text='AI forecast metadata (will JSON‑encode datetimes/timestamps)'
+                          )
+    fraud_flag            = models.BooleanField(
+                              default=False,
+                              help_text='Flag if potential fraud detected'
+                          )
+    created_at            = models.DateTimeField(
+                              default=timezone.now,
+                              editable=False,
+                              help_text='Creation timestamp'
+                          )
 
-    created_at    = models.DateTimeField(
-                        default=timezone.now,
-                        editable=False,
-                        help_text='Creation timestamp'
-                    )
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['name']),
+            models.Index(fields=['user']),
+        ]
 
     def __str__(self):
         return self.name

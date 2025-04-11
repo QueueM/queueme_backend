@@ -6,5 +6,5 @@ class ShopappConfig(AppConfig):
     name = 'shopApp'
 
     def ready(self):
-        # Import signals so that they are registered.
+        # Import signals to register them on app startup.
         import shopApp.signals

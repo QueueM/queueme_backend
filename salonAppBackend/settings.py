@@ -20,9 +20,7 @@ SECRET_KEY = 'django-insecure-wgp2^53g-9tws^wo@23$0(!4n^y*r9d76$rc2b_4!^gn91!u=+
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
-
 INSTALLED_APPS = [
     "daphne",
 
@@ -32,6 +30,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_filters',
 
     'rest_framework',
     'corsheaders',
@@ -121,7 +121,6 @@ MEDIA_URL = f'https://{os.environ.get("AWS_S3_CUSTOM_DOMAIN", "")}/media/'
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
 # REST framework
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -168,29 +167,24 @@ CSRF_TRUSTED_ORIGINS = [
     "https://api.queueme.net",
 ]
 
-# Channels
+# Channels configuration (using an in-memory channel layer for development)
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",
     },
 }
 
-
 # ------------------------------------------------------------------------------
-# Celery Configuration
+# Celery Configuration (not directly relevant for Channels)
 # ------------------------------------------------------------------------------
 
-# Broker & result backend (Redis example)
 CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'default'
-
-# Use Django database to store scheduled tasks
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
 CELERY_TIMEZONE = TIME_ZONE
 
 CELERY_BEAT_SCHEDULE = {
-    # Recalculate AI forecasts daily at midnight UTC
     'daily-ai-forecast-update': {
         'task': 'shopServiceApp.tasks.recalc_all_forecasts',
         'schedule': crontab(hour=0, minute=0),

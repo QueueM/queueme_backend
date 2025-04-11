@@ -42,13 +42,13 @@ def update_ai_fields(instance):
     instance.ai_personalization = pers
 
     instance.save(update_fields=['ai_recommendations', 'ai_personalization'])
-    # Optionally, clear the flag if future independent updates are desired:
+    # Optionally, to allow further updates later, you can reset the flag:
     # instance._ai_update_in_progress = False
 
 def analyze_sentiment(text):
     """
     Analyzes the sentiment of the given text.
-    Returns 0.75 if "good" is found (case-insensitive), otherwise 0.25.
+    Returns 0.75 if "good" (case-insensitive) is found, otherwise 0.25.
     """
     try:
         return 0.75 if "good" in text.lower() else 0.25
@@ -58,13 +58,12 @@ def analyze_sentiment(text):
 
 def get_fraud_risk(instance):
     """
-    Calculates a fraud risk score for the given instance.
-    Replace this stub with your actual fraud detection logic.
+    Calculates a fraud risk score for the given instance using the check_booking function.
+    If check_booking returns True (i.e. fraud is detected) then risk is 1.0, else 0.0.
     """
     try:
-        from ai_features import fraud_detection
-        risk_score = fraud_detection.calculate_risk(instance)
-        return risk_score
+        from ai_features.fraud_detection import check_booking
+        return 1.0 if check_booking(instance) else 0.0
     except Exception as e:
         logger.error("Error calculating fraud risk for instance %s: %s", instance.pk, e)
         return 0.0

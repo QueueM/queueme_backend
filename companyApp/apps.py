@@ -1,3 +1,4 @@
+# companyApp/apps.py
 from django.apps import AppConfig
 
 class CompanyappConfig(AppConfig):
@@ -5,5 +6,5 @@ class CompanyappConfig(AppConfig):
     name = 'companyApp'
 
     def ready(self):
-        # Register AI-related signal handlers
+        # Import signals to register them on app startup.
         import companyApp.signals

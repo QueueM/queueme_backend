@@ -1,8 +1,6 @@
 # shopServiceApp/signals.py
-
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import Signal, receiver
-
 from .models import (
     ShopServiceCategoryModel,
     ShopServiceDetailsModel,
@@ -11,7 +9,6 @@ from .models import (
 from ai_features.forecasting import calculate_for_category, calculate_for_service
 from customClasses.ai_utils import get_fraud_risk
 
-# Simple “booking changed” signal
 booking_changed = Signal()
 
 @receiver(post_save, sender=ShopServiceCategoryModel)

@@ -1,10 +1,8 @@
 # shopServiceApp/filters.py
-
 from django_filters import rest_framework as filters
-from django.db.models import Q
-from django.db import models  # Added for filter_overrides mapping
 from customClasses.BaseFilterSet import BaseFilterSet
-
+from django.db.models import Q
+from django.db import models
 from .models import (
     ShopServiceGalleryModel,
     ServiceBookingDetailsModel,
@@ -12,58 +10,37 @@ from .models import (
     ShopServiceCategoryModel
 )
 
-
 class ShopServiceGalleryFilter(BaseFilterSet):
-    """
-    Filter for service gallery items by service.
-    """
     service = filters.ModelChoiceFilter(
         field_name='service',
         queryset=ShopServiceDetailsModel.objects.all()
     )
-
     class Meta:
         model = ShopServiceGalleryModel
         fields = ['service']
 
-
 class ServiceBookingDetailsFilter(BaseFilterSet):
-    """
-    Filter bookings by status, fraud flag, date range, or a general search query.
-    """
-    status = filters.ChoiceFilter(
-        field_name='status',
-        choices=ServiceBookingDetailsModel.STATUS_CHOICES
-    )
+    status = filters.ChoiceFilter(field_name='status')
     fraud_flag = filters.BooleanFilter(field_name='fraud_flag')
     booking_date = filters.DateFromToRangeFilter(field_name='booking_date')
     query = filters.CharFilter(method='filter_query')
-
     class Meta:
         model = ServiceBookingDetailsModel
         exclude = ['created_at']
 
     def filter_query(self, queryset, name, value):
-        return queryset.filter(
-            Q(customer__name__icontains=value) |
-            Q(id__icontains=value)
-        )
-
+        return queryset.filter(Q(customer__name__icontains=value) | Q(id__icontains=value))
 
 class ShopServiceDetailsFilter(BaseFilterSet):
-    """
-    Filter services by name, shop, or category, plus a general search query.
-    """
     shop = filters.ModelChoiceFilter(
         field_name='shop',
-        queryset=ShopServiceDetailsModel.objects.none()  # will be set dynamically
+        queryset=ShopServiceDetailsModel.objects.none()
     )
     category = filters.ModelChoiceFilter(
         field_name='category',
         queryset=ShopServiceCategoryModel.objects.all()
     )
     query = filters.CharFilter(method='filter_query')
-
     class Meta:
         model = ShopServiceDetailsModel
         exclude = ['forecast_data', 'created_at']
@@ -73,31 +50,18 @@ class ShopServiceDetailsFilter(BaseFilterSet):
         self.filters['shop'].queryset = ShopServiceDetailsModel.objects.values_list('shop', flat=True).distinct()
 
     def filter_query(self, queryset, name, value):
-        return queryset.filter(
-            Q(name__icontains=value) |
-            Q(id__icontains=value)
-        )
-
+        return queryset.filter(Q(name__icontains=value) | Q(id__icontains=value))
 
 class ShopServiceCategoryFilter(BaseFilterSet):
-    """
-    Filter for service categories by name or ID.
-    """
     query = filters.CharFilter(method='filter_query')
-
     class Meta:
         model = ShopServiceCategoryModel
         fields = "__all__"
-        # Added filter_overrides to handle JSONField correctly:
         filter_overrides = {
             models.JSONField: {
                 'filter_class': filters.CharFilter,
                 'extra': lambda f: {'lookup_expr': 'exact'},
             },
         }
-
     def filter_query(self, queryset, name, value):
-        return queryset.filter(
-            Q(name__icontains=value) |
-            Q(id__icontains=value)
-        )
+        return queryset.filter(Q(name__icontains=value) | Q(id__icontains=value))

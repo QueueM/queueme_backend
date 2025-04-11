@@ -5,7 +5,6 @@ from .models import ShopDetailsModel
 from notificationsapp.models import NotificationModel
 from customClasses.ai_utils import update_ai_fields
 
-# Notification signal remains unchanged.
 @receiver(post_save, sender=ShopDetailsModel)
 def shop_created_or_updated_notification(sender, instance, created, **kwargs):
     """
@@ -19,12 +18,11 @@ def shop_created_or_updated_notification(sender, instance, created, **kwargs):
         message = f"Shop '{instance.shop_name}' has been updated."
     
     NotificationModel.objects.create(
-        user=instance.company.user,  # Assumes ShopDetailsModel has a related company with a user
+        user=instance.company.user,  # Assumes a related company with a user exists
         title=title,
         message=message
     )
 
-# AI data update signal using our custom AI utility.
 @receiver(post_save, sender=ShopDetailsModel)
 def update_ai_data(sender, instance, created, **kwargs):
     """

@@ -1,13 +1,17 @@
+# shopServiceApp/tests.py
 from django.test import TestCase
+from django.urls import reverse
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
 from companyApp.models import CompanyDetailsModel
 from shopApp.models import ShopDetailsModel
-from .models import (
+from shopServiceApp.models import (
     ShopServiceCategoryModel,
     ShopServiceDetailsModel,
     ServiceBookingDetailsModel
 )
+from customersApp.models import CustomersDetailsModel  # Use your actual customer model
+from datetime import timedelta
 
 User = get_user_model()
 
@@ -30,16 +34,18 @@ class ShopServiceAppAPITest(TestCase):
             name='Service1',
             description='Desc',
             price=50.00,
-            duration='00:30:00'
+            duration=timedelta(minutes=30)
         )
+        self.customer = CustomersDetailsModel.objects.create(user=self.user, name="Test Customer")
 
     def test_create_booking_and_fraud_flag(self):
         data = {
-            'customer': self.user.id,
+            'customer': self.customer.id,
             'service': self.service.id,
             'booking_date': '2025-04-10',
             'booking_time': '10:00:00'
         }
-        response = self.client.post('/shopServiceApp/bookings/', data, format='json')
+        url = reverse('shopServiceApp:services-bookings-list')
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, 201)
         self.assertIn('fraud_flag', response.data)

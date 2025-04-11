@@ -1,23 +1,36 @@
-from rest_framework import viewsets
-from rest_framework.decorators import action
+# shopApp/views.py
+from rest_framework import viewsets, filters, status
+from rest_framework.decorators import action  # Import action
 from rest_framework.response import Response
 from django.utils import timezone
 from datetime import datetime, timedelta
 from django.db.models import Avg, Sum
 from django.db.models.functions import TruncDate, TruncHour, TruncWeek, TruncMonth
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.permissions import AllowAny
 
-# Import DashboardLog-related serializer and model from the dashboard app
+# DashboardLog imports from shopDashboardApp
 from shopDashboardApp.serializers import DashboardLogSerializer
 from shopDashboardApp.models import DashboardLog
-from .filters import DashboardLogFilter
+from shopDashboardApp.filters import DashboardLogFilter
 
-# Import shop models and their serializers
+# Filters for shopApp
+from .filters import (
+    DashboardLogFilter as ShopDashboardLogFilter,
+    ShopDetailsViewsetFilter,
+    ShopGalleryImagesFilter,
+    ShopSpecialistDetailsFilter,
+)
+
+# Models from shopApp
 from .models import (
     ShopDetailsModel,
     ShopGalleryImagesModel,
     ShopSpecialistDetailsModel,
     SpecialistTypesModel,
 )
+
+# Serializers from shopApp
 from .serializers import (
     ShopDetailsModelSerializer,
     ShopGalleryImagesModelSerializer,
@@ -25,17 +38,14 @@ from .serializers import (
     SpecialistTypesSerializer,
 )
 
-# -------------------------------------
-# DashboardLog ViewSet (for dashboard stats)
-# -------------------------------------
 class DashboardLogViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    Provides a read-only API for DashboardLog entries with an additional 
-    'trends' action that aggregates a specified metric over a date range.
+    Read-only API for DashboardLog entries with an additional 'trends' action.
     """
     queryset = DashboardLog.objects.all()
     serializer_class = DashboardLogSerializer
     filterset_class = DashboardLogFilter
+    permission_classes = [AllowAny]
 
     @action(detail=False, methods=['get'])
     def trends(self, request):
@@ -43,7 +53,6 @@ class DashboardLogViewSet(viewsets.ReadOnlyModelViewSet):
         metric = request.query_params.get('metric', 'total_bookings')
         granularity = request.query_params.get('granularity', 'daily')
 
-        # Parse provided date range; if absent, default to the last 30 days.
         date_from = request.query_params.get('date_from')
         date_to = request.query_params.get('date_to')
         try:
@@ -57,7 +66,6 @@ class DashboardLogViewSet(viewsets.ReadOnlyModelViewSet):
             end = timezone.now().date()
             start = end - timedelta(days=29)
 
-        # Set the truncation function based on the requested granularity.
         if granularity == 'hourly':
             trunc = TruncHour('timestamp')
         elif granularity == 'weekly':
@@ -67,7 +75,6 @@ class DashboardLogViewSet(viewsets.ReadOnlyModelViewSet):
         else:
             trunc = TruncDate('timestamp')
 
-        # Aggregate data by period over the chosen date range.
         aggregated = (
             qs.filter(timestamp__date__gte=start, timestamp__date__lte=end)
               .annotate(period=trunc)
@@ -75,11 +82,9 @@ class DashboardLogViewSet(viewsets.ReadOnlyModelViewSet):
               .annotate(value=Sum(metric) if metric.startswith('total_') else Avg(metric))
               .order_by('period')
         )
-        # Extract labels (periods) and values, defaulting to 0 if missing.
         labels = [entry['period'].isoformat() for entry in aggregated]
         values = [entry['value'] or 0 for entry in aggregated]
 
-        # Calculate statistics for the previous equivalent period.
         period_length = (end - start) + timedelta(days=1)
         prev_start = start - period_length
         prev_end = start - timedelta(days=1)
@@ -97,7 +102,6 @@ class DashboardLogViewSet(viewsets.ReadOnlyModelViewSet):
             delta = ((val - prev_val) / prev_val * 100) if prev_val else None
             deltas.append(round(delta, 2) if delta is not None else None)
 
-        # Build an example comparison dictionary; adjust logic as needed.
         comparison = {'total_revenue': sum(values)}
 
         response_data = {
@@ -106,55 +110,79 @@ class DashboardLogViewSet(viewsets.ReadOnlyModelViewSet):
             'delta_percent': deltas,
             'metric': metric,
             'granularity': granularity,
-            'total_bookings': values,  # You may compute a separate value if needed.
             'comparison': comparison,
         }
         return Response(response_data)
 
-
-# -------------------------------------
-# ShopDetails ViewSet - Handles CRUD for shops.
-# -------------------------------------
 class ShopDetailsViewSet(viewsets.ModelViewSet):
     """
     API endpoint for managing ShopDetails.
-    Use the detail endpoint (e.g., GET /shops/8/) to retrieve a shop by its unique ID.
+    Filtering logic:
+      - If "shopId" is provided in query params, return only that shop.
+      - If "companyId" is provided and no shopId, return shops for that company.
+      - Otherwise, return all shops.
     """
     queryset = ShopDetailsModel.objects.all()
     serializer_class = ShopDetailsModelSerializer
-    # If filtering by query parameters (e.g., company, query, id), you should
-    # add: filterset_class = ShopDetailsViewsetFilter (from shopApp/filters.py)
-    # For maximum efficiency, ensure your filterset and pagination are tuned to your use case.
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = ShopDetailsViewsetFilter
+    search_fields = ['shop_name', 'owner__username']
+    ordering_fields = ['created_at', 'shop_name']
+    permission_classes = [AllowAny]
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        shop_id_param = self.request.query_params.get('shopId') or self.request.query_params.get('shopid')
+        company_id_param = self.request.query_params.get('companyId') or self.request.query_params.get('companyid')
+        
+        if shop_id_param:
+            try:
+                shop_id = int(shop_id_param)
+                qs = qs.filter(id=shop_id)
+            except ValueError:
+                pass
+        elif company_id_param:
+            try:
+                company_id = int(company_id_param)
+                qs = qs.filter(company__id=company_id)
+            except ValueError:
+                pass
+        
+        return qs
 
-# -------------------------------------
-# ShopGalleryImages ViewSet
-# -------------------------------------
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['user'] = self.request.user
+        return context
+
 class ShopGalleryImagesModelViewSet(viewsets.ModelViewSet):
     """
     API endpoint for managing ShopGalleryImages.
     """
     queryset = ShopGalleryImagesModel.objects.all()
     serializer_class = ShopGalleryImagesModelSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = ShopGalleryImagesFilter
+    search_fields = ['shop__shop_name']
+    ordering_fields = ['id']
+    permission_classes = [AllowAny]
 
-
-# -------------------------------------
-# ShopSpecialistDetails ViewSet
-# -------------------------------------
 class ShopSpecialistDetailsModelViewSet(viewsets.ModelViewSet):
     """
     API endpoint for managing ShopSpecialistDetails.
     """
     queryset = ShopSpecialistDetailsModel.objects.all()
     serializer_class = ShopSpecialistDetailsModelSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_class = ShopSpecialistDetailsFilter
+    search_fields = ['speciality', 'employee__name']
+    ordering_fields = ['id', 'rating']
+    permission_classes = [AllowAny]
 
-
-# -------------------------------------
-# SpecialistTypes ViewSet
-# -------------------------------------
 class SpecialistTypesModelViewSet(viewsets.ModelViewSet):
     """
     API endpoint for managing SpecialistTypes.
     """
     queryset = SpecialistTypesModel.objects.all()
     serializer_class = SpecialistTypesSerializer
+    permission_classes = [AllowAny]

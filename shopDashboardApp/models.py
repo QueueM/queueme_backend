@@ -1,13 +1,12 @@
 # shopDashboardApp/models.py
 from django.db import models
 from django.utils import timezone
-from shopApp.models import ShopDetailsModel
-from companyApp.models import CompanyDetailsModel
 
 class DashboardLog(models.Model):
     timestamp               = models.DateTimeField(default=timezone.now)
-    company                 = models.ForeignKey(CompanyDetailsModel, on_delete=models.CASCADE)
-    shop                    = models.ForeignKey(ShopDetailsModel, null=True, blank=True, on_delete=models.CASCADE)
+    # Use string references to avoid circular dependencies.
+    company                 = models.ForeignKey("companyApp.CompanyDetailsModel", on_delete=models.CASCADE)
+    shop                    = models.ForeignKey("shopApp.ShopDetailsModel", null=True, blank=True, on_delete=models.CASCADE)
     total_bookings          = models.IntegerField(default=0)
     total_revenue           = models.FloatField(default=0.0)
     total_specialists       = models.IntegerField(default=0)

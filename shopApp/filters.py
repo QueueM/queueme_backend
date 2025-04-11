@@ -1,23 +1,19 @@
+# shopApp/filters.py
 from django_filters import rest_framework as filters
-from customClasses.BaseFilterSet import BaseFilterSet  # Ensure this is correctly subclassing filters.FilterSet
+from customClasses.BaseFilterSet import BaseFilterSet  # Ensure this properly subclasses django_filters.FilterSet
 from django.db import models
 from django.db.models import Q
-
-# Models from shopApp
 from .models import (
     ShopDetailsModel,
     ShopGalleryImagesModel,
     ShopSpecialistDetailsModel,
 )
-
-# DashboardLog is defined in shopDashboardApp.models.
+# If needed, import DashboardLog model from shopDashboardApp
 from shopDashboardApp.models import DashboardLog
-
 
 class ShopGalleryImagesFilter(BaseFilterSet):
     """
-    Filter for ShopGalleryImagesModel.
-    Allows filtering by the associated shop ID.
+    Filter for ShopGalleryImagesModel by shop ID.
     """
     shop = filters.NumberFilter(field_name='shop__id', help_text="Filter by shop ID")
 
@@ -25,11 +21,10 @@ class ShopGalleryImagesFilter(BaseFilterSet):
         model = ShopGalleryImagesModel
         exclude = ['image']
 
-
 class ShopDetailsViewsetFilter(BaseFilterSet):
     """
     Filter for ShopDetailsModel.
-    Allows filtering by company ID and free-text search on shop name or shop ID.
+    Supports filtering by company ID and free-text search on shop name or shop ID.
     """
     company = filters.NumberFilter(field_name='company__id', help_text="Filter by company ID")
     query = filters.CharFilter(method='filter_query', help_text="Search by shop name or shop ID")
@@ -45,10 +40,6 @@ class ShopDetailsViewsetFilter(BaseFilterSet):
         }
 
     def filter_query(self, queryset, name, value):
-        """
-        Filters the queryset by checking if the shop name (case-insensitive)
-        contains the query or if the query can be interpreted as a shop ID.
-        """
         try:
             id_val = int(value)
             id_filter = Q(id=id_val)
@@ -56,11 +47,10 @@ class ShopDetailsViewsetFilter(BaseFilterSet):
             id_filter = Q()
         return queryset.filter(Q(shop_name__icontains=value) | id_filter)
 
-
 class ShopSpecialistDetailsFilter(BaseFilterSet):
     """
     Filter for ShopSpecialistDetailsModel.
-    Allows filtering by shop ID and free-text search on speciality or specialist ID.
+    Supports filtering by shop ID and free-text search on speciality or specialist ID.
     """
     shop = filters.NumberFilter(field_name='shop__id', help_text="Filter by shop ID")
     query = filters.CharFilter(method='filter_query', help_text="Search by speciality or specialist ID")
@@ -70,10 +60,6 @@ class ShopSpecialistDetailsFilter(BaseFilterSet):
         exclude = ['avatar_image']
 
     def filter_query(self, queryset, name, value):
-        """
-        Filters the queryset by checking if the speciality field (case-insensitive)
-        contains the query or if the query can be interpreted as a specialist ID.
-        """
         try:
             id_val = int(value)
             id_filter = Q(id=id_val)
@@ -81,14 +67,9 @@ class ShopSpecialistDetailsFilter(BaseFilterSet):
             id_filter = Q()
         return queryset.filter(Q(speciality__icontains=value) | id_filter)
 
-
 class DashboardLogFilter(BaseFilterSet):
     """
-    Filter for DashboardLog.
-    Supports filtering by:
-      - A range of timestamps.
-      - Company ID and Shop ID.
-      - Numeric filtering on total_bookings and total_revenue.
+    Filter for DashboardLog for timestamp range, company, shop, and numerical fields.
     """
     timestamp = filters.DateFromToRangeFilter()
     company = filters.NumberFilter(field_name='company__id', help_text="Filter by company ID")

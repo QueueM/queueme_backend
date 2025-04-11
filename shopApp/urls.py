@@ -1,3 +1,4 @@
+# shopApp/urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
@@ -5,8 +6,10 @@ from .views import (
     ShopGalleryImagesModelViewSet,
     ShopSpecialistDetailsModelViewSet,
     SpecialistTypesModelViewSet,
-    DashboardLogViewSet
+    DashboardLogViewSet,
 )
+
+app_name = "shopApp"
 
 router = DefaultRouter()
 router.register(r'shops', ShopDetailsViewSet, basename='shops')
@@ -17,6 +20,5 @@ router.register(r'dashboard', DashboardLogViewSet, basename='dashboard')
 
 urlpatterns = [
     path('', include(router.urls)),
-    # This line includes the shopServiceApp URLs under "/shops/service/" 
-    path('service/', include('shopServiceApp.urls')),
+    path('service/', include('shopServiceApp.urls')),  # If you have additional service-related URLs.
 ]
